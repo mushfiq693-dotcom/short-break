@@ -1,0 +1,72 @@
+# Project: "Short Break" — Food Cart Ordering Website
+
+## Overview
+Build a full-stack web app for a small food cart called **"Short Break"**. 
+It sells exactly 3 items. The site needs two roles — **User** and **Admin** — 
+with authentication, order placement, order history, and an admin sales dashboard.
+
+## Menu (fixed, hardcoded is fine)
+1. Meat Box — ৳100
+2. Grilled Chicken Sandwich — ৳60
+3. French Fries — ৳50
+
+## Tech Stack
+- Frontend: React (Vite) + Tailwind CSS
+- Backend/DB/Auth: **Supabase**
+  - Postgres database (Supabase-hosted)
+  - Supabase Auth for signup/login (email + password)
+  - Row Level Security (RLS) policies for role-based access — users only see their own orders, admins see everything
+  - Use `@supabase/supabase-js` client directly from the frontend — no separate Express backend needed unless a specific action genuinely requires server-side logic (in which case use a Supabase Edge Function, not a full backend)
+
+## Roles & Auth
+- Two roles: `user` and `admin`, stored as a `role` column on a `profiles` table (linked 1:1 to `auth.users` via user id).
+- Regular users self-register via Supabase Auth (email + password).
+- Admin account is NOT self-registered — create manually via Supabase dashboard or a seed script, then set `role = 'admin'` on their profile row directly in the DB.
+- Route guards on the frontend: `/admin/*` only accessible to admin role; redirect others.
+- RLS policies enforced at the database level as the real security boundary (frontend route guards are just UX, not security):
+  - `orders` table: users can `SELECT`/`INSERT` only rows where `user_id = auth.uid()`; admins can `SELECT`/`UPDATE` all rows.
+  - `order_items` table: same pattern, scoped through the parent order.
+
+## Public Pages
+- **Home / Menu page**: showcase all 3 items clearly — image placeholder, name, price, short description, "Add to order" button. This is the main landing experience, make it visually appetizing.
+- **Login / Signup pages** (Supabase Auth UI or custom forms using `supabase.auth.signUp` / `signInWithPassword`).
+
+## User Dashboard (role: user)
+- Place an order: select item(s) + quantity, see running total, submit order (status: "pending").
+- Order history: list of past orders with date, items, quantities, total price, and status (pending / confirmed / completed).
+- Nothing else — keep it minimal.
+
+## Admin Dashboard (role: admin)
+- **Incoming orders view**: see all pending orders (polling or Supabase Realtime subscription — Realtime is easy to wire up on Supabase and would be a nice touch here), with ability to change status (pending → confirmed → completed).
+- **Sales overview**:
+  - Total revenue (all-time, and filterable by today/this week/this month).
+  - Total orders count.
+  - Best-selling item breakdown (simple bar chart or table: item name, units sold, revenue).
+  - Simple table/list of all orders across all users.
+- Keep this data-dense but readable — admin needs to scan it fast.
+
+## Data Model (suggested — Supabase/Postgres)
+- `profiles`: id (uuid, FK to auth.users), name, role (user/admin), created_at
+- `menu_items`: id, name, price (seed with the 3 fixed items above)
+- `orders`: id, user_id (FK to profiles), status, total_price, created_at
+- `order_items`: id, order_id (FK to orders), menu_item_id (FK to menu_items), quantity, price_at_order
+
+## Design Direction
+- Colorful, fun, food-cart energy — NOT a generic SaaS template.
+- Avoid the default AI-generated look (no cream+terracotta, no generic rounded SaaS cards with identical shadows, no ALL-CAPS eyebrow labels).
+- Ground the palette and type choices in "street food cart" as a subject: think hand-painted menu boards, roadside cart signage, warm energetic colors — but keep it clean and usable, not cluttered.
+- One clear hero moment on the homepage showing the 3 items. Mobile-responsive throughout.
+
+## Build Order (do this in phases, confirm with me before moving to the next)
+1. Set up Supabase project (tables, RLS policies, seed script with admin profile + 3 menu items). Set up frontend scaffold with Supabase client configured.
+2. Auth: signup/login flow + route guards — test that RLS policies actually block cross-user access before building UI on top.
+3. Public menu page + user order flow + user dashboard (order history).
+4. Admin dashboard: incoming orders + status updates.
+5. Admin sales overview (aggregation queries + simple charts).
+6. Polish pass: responsiveness, empty states, error handling, loading states.
+
+## Constraints
+- Keep it simple — this is a small food cart, not an enterprise system. No over-engineering.
+- RLS policies are the real access control — don't rely on frontend checks alone for security.
+- Prioritize working end-to-end over polish in early phases.
+- Explain what you're doing before writing large chunks of code, and pause for my review after each phase above.

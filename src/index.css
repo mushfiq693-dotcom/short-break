@@ -1,0 +1,181 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-signage: 'Fraunces', 'DM Serif Display', Georgia, serif;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background-color: #FDFBF7;
+    color: #1C1917;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-display {
+    font-family: var(--font-heading);
+  }
+
+  .font-signage {
+    font-family: var(--font-signage);
+  }
+}
+
+/* Minimalist Warm Food Cart Ambient Background */
+.cart-pattern-bg {
+  background-color: #FDFBF7;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(251, 191, 36, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(244, 63, 94, 0.04) 0px, transparent 50%);
+}
+
+/* Minimal Luxury Food Card */
+.food-card-minimal {
+  background: #FFFFFF;
+  border: 1px solid rgba(231, 229, 228, 0.9);
+  box-shadow: 0 4px 20px -2px rgba(28, 25, 23, 0.05), 0 2px 6px -1px rgba(28, 25, 23, 0.03);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.food-card-minimal:hover {
+  transform: translateY(-4px);
+  border-color: rgba(245, 158, 11, 0.45);
+  box-shadow: 0 20px 35px -8px rgba(245, 158, 11, 0.14), 0 8px 16px -4px rgba(28, 25, 23, 0.04);
+}
+
+/* Minimal Sleek Primary Gradient Button */
+.food-btn-primary {
+  background-image: linear-gradient(135deg, #F43F5E 0%, #E11D48 60%, #BE123C 100%);
+  color: #FFFFFF;
+  font-weight: 700;
+  box-shadow: 0 4px 14px -1px rgba(225, 29, 72, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.food-btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px -2px rgba(225, 29, 72, 0.45);
+  filter: brightness(1.05);
+}
+
+.food-btn-primary:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px -1px rgba(225, 29, 72, 0.3);
+}
+
+/* Minimal Amber Gradient Secondary Button */
+.food-btn-secondary {
+  background-image: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  color: #1A0F00;
+  font-weight: 700;
+  box-shadow: 0 4px 14px -1px rgba(245, 158, 11, 0.3);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.food-btn-secondary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px -2px rgba(245, 158, 11, 0.4);
+  filter: brightness(1.04);
+}
+
+.food-btn-secondary:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px -1px rgba(245, 158, 11, 0.25);
+}
+
+/* Minimalist Golden Glow Hero CTA */
+.hero-candle-cta {
+  background-image: linear-gradient(135deg, #FBBF24 0%, #F59E0B 50%, #D97706 100%);
+  color: #180D00;
+  font-weight: 800;
+  box-shadow: 0 6px 24px -2px rgba(245, 158, 11, 0.45);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-candle-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px -3px rgba(245, 158, 11, 0.6);
+  filter: brightness(1.06);
+}
+
+.hero-candle-cta:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 12px -1px rgba(245, 158, 11, 0.35);
+}
+
+/* Minimal Glassmorphism Panels */
+.glass-panel-dark {
+  background: rgba(18, 16, 14, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* Subtle Ken Burns Hero Background Animation */
+@keyframes kenBurnsSlow {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.03) translate(-0.4%, -0.4%);
+  }
+  100% {
+    transform: scale(1) translate(0, 0);
+  }
+}
+
+.hero-ken-burns {
+  animation: kenBurnsSlow 26s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Candle Glow Pulse */
+@keyframes candleGlowPulse {
+  0%, 100% {
+    opacity: 0.45;
+    transform: scale(0.99);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.02);
+  }
+}
+
+.candle-glow-pulse {
+  animation: candleGlowPulse 4s ease-in-out infinite;
+}
+
+/* Disable Animations when prefers-reduced-motion is requested */
+@media (prefers-reduced-motion: reduce) {
+  .hero-ken-burns,
+  .candle-glow-pulse,
+  .animate-pulse,
+  .animate-bounce,
+  .animate-spin,
+  .animate-ping {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #141210;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(245, 158, 11, 0.5);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 158, 11, 0.8);
+}
