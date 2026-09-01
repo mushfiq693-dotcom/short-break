@@ -42,10 +42,10 @@ export function HomePage({ onNavigateToOrders, onNavigateToLogin }) {
   }, [])
 
   return (
-    <div className="bg-[#FFFBF2] min-h-screen pb-24">
+    <div className="bg-[#0E0C0A] min-h-screen pb-24 text-stone-100">
       
       {/* Full-Bleed Atmospheric Hero Section */}
-      <section className="relative w-full h-[90vh] sm:h-[95vh] min-h-[600px] max-h-[1100px] overflow-hidden flex flex-col justify-end text-white border-b-4 border-stone-950 select-none">
+      <section className="relative w-full h-[90vh] sm:h-[95vh] min-h-[600px] max-h-[1100px] overflow-hidden flex flex-col justify-end text-white border-b border-amber-500/20 select-none">
         
         {/* Background Real Hero Photograph */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -59,12 +59,12 @@ export function HomePage({ onNavigateToOrders, onNavigateToLogin }) {
           <div 
             className="absolute inset-0"
             style={{
-              background: 'linear-gradient(to bottom, rgba(14,12,10,0.4) 0%, rgba(14,12,10,0.05) 25%, rgba(14,12,10,0.4) 60%, rgba(14,12,10,0.85) 88%, rgba(14,12,10,0.98) 100%)'
+              background: 'linear-gradient(to bottom, rgba(14,12,10,0.4) 0%, rgba(14,12,10,0.05) 25%, rgba(14,12,10,0.4) 60%, rgba(14,12,10,0.88) 88%, rgba(14,12,10,0.98) 100%)'
             }}
           />
 
           {/* Dedicated Lower-Third Scrim for Bulletproof Text Contrast */}
-          <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[#0E0C0A] via-[#0E0C0A]/85 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[#0E0C0A] via-[#0E0C0A]/90 to-transparent" />
         </div>
 
         {/* Hero Content positioned strictly in the darkened lower third */}
@@ -111,7 +111,7 @@ export function HomePage({ onNavigateToOrders, onNavigateToLogin }) {
               {!user && (
                 <button
                   onClick={onNavigateToLogin}
-                  className="inline-flex items-center gap-2 bg-[#201C18]/90 hover:bg-[#2C2722] text-amber-300 font-black px-6 py-3.5 rounded-xl text-sm border-2 border-amber-400/50 shadow-lg backdrop-blur-xs transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 bg-[#201C18]/90 hover:bg-[#2C2722] text-amber-300 font-black px-6 py-3.5 rounded-xl text-sm border border-amber-400/50 shadow-lg backdrop-blur-xs transition-all cursor-pointer"
                 >
                   <UserPlus className="w-4 h-4" />
                   <span>Sign In / Register</span>
@@ -119,7 +119,7 @@ export function HomePage({ onNavigateToOrders, onNavigateToLogin }) {
               )}
 
               {/* Fast Badges */}
-              <div className="hidden sm:flex items-center gap-3 text-xs font-bold text-stone-300 bg-stone-950/70 px-3.5 py-2.5 rounded-xl border border-stone-800/80 backdrop-blur-xs">
+              <div className="hidden sm:flex items-center gap-3 text-xs font-bold text-stone-300 bg-[#161412]/80 px-3.5 py-2.5 rounded-xl border border-white/10 backdrop-blur-xs">
                 <span className="flex items-center gap-1 text-amber-400">
                   <MapPin className="w-3.5 h-3.5" /> Helipad, Kalapara
                 </span>
@@ -155,19 +155,19 @@ export function HomePage({ onNavigateToOrders, onNavigateToLogin }) {
 
       </section>
 
-      {/* Main Menu Section (Solid & Clean Background Below the Hero) */}
+      {/* Main Menu Section (Cohesive Dark Ambient Background Below the Hero) */}
       <section id="menu-section" className="cart-pattern-bg max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
         
         {/* Section Heading */}
         <div className="text-center max-w-xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-100 text-stone-900 text-xs font-black rounded-full mb-3 uppercase tracking-widest border border-amber-300">
-            <Flame className="w-3.5 h-3.5 text-rose-600" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-400/15 text-amber-300 text-xs font-black rounded-full mb-3 uppercase tracking-widest border border-amber-400/30">
+            <Flame className="w-3.5 h-3.5 text-rose-500" />
             <span>Hand-Crafted Menu • Helipad, Kalapara</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-black text-stone-900 font-display">
+          <h2 className="text-3xl sm:text-4xl font-black text-amber-50 font-display">
             The Fixed 3 Specials
           </h2>
-          <p className="text-stone-600 text-sm sm:text-base mt-2">
+          <p className="text-stone-300 text-sm sm:text-base mt-2">
             No long waiting times. Choose your favorites and pick up fresh off the grill.
           </p>
         </div>
@@ -176,11 +176,11 @@ export function HomePage({ onNavigateToOrders, onNavigateToLogin }) {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[1, 2, 3].map(n => (
-              <div key={n} className="bg-white rounded-2xl border-2 border-stone-200 h-96 animate-pulse p-6">
-                <div className="bg-stone-200 h-48 rounded-xl mb-4" />
-                <div className="bg-stone-200 h-6 w-3/4 rounded mb-2" />
-                <div className="bg-stone-200 h-4 w-full rounded mb-2" />
-                <div className="bg-stone-200 h-10 w-full rounded mt-6" />
+              <div key={n} className="glass-panel-dark rounded-3xl h-96 animate-pulse p-6 border border-white/10">
+                <div className="bg-stone-800 h-48 rounded-2xl mb-4" />
+                <div className="bg-stone-800 h-6 w-3/4 rounded mb-2" />
+                <div className="bg-stone-800 h-4 w-full rounded mb-2" />
+                <div className="bg-stone-800 h-10 w-full rounded mt-6" />
               </div>
             ))}
           </div>
@@ -254,15 +254,15 @@ export function HomePage({ onNavigateToOrders, onNavigateToLogin }) {
         <div className="fixed bottom-4 left-4 right-4 z-40 md:hidden animate-slideUp">
           <button
             onClick={() => setIsCartOpen(true)}
-            className="w-full bg-rose-600 text-white py-3.5 px-5 rounded-2xl border-2 border-stone-950 shadow-[4px_4px_0px_#1C1917] flex items-center justify-between font-black text-sm active:translate-y-1"
+            className="w-full hero-candle-cta text-stone-950 py-3.5 px-5 rounded-2xl shadow-xl flex items-center justify-between font-black text-sm active:translate-y-1"
           >
             <div className="flex items-center gap-2">
-              <span className="bg-stone-900 text-amber-300 w-6 h-6 rounded-full flex items-center justify-center text-xs">
+              <span className="bg-stone-950 text-amber-300 w-6 h-6 rounded-full flex items-center justify-center text-xs font-mono">
                 {totalCount}
               </span>
               <span>View Cart Order</span>
             </div>
-            <span className="text-base font-display">৳{totalAmount} →</span>
+            <span className="text-base font-display font-bold">৳{totalAmount} →</span>
           </button>
         </div>
       )}
