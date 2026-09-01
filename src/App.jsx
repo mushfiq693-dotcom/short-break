@@ -4,6 +4,7 @@ import { CartProvider } from './context/CartContext'
 import { Navbar } from './components/Navbar'
 import { Footer } from './components/Footer'
 import { CartDrawer } from './components/CartDrawer'
+import { DeveloperCreditWidget } from './components/DeveloperCreditWidget'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { AdminRoute } from './components/AdminRoute'
 
@@ -141,6 +142,9 @@ function AppContent() {
 
       {/* Footer */}
       <Footer />
+
+      {/* Floating Developer Credit Widget (Bottom-Right Circle Pop-up) */}
+      <DeveloperCreditWidget />
       
     </div>
   )

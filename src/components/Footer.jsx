@@ -1,26 +1,7 @@
-import React, { useState } from 'react'
-import { MapPin, Phone, Clock, Heart, Flame, PhoneCall, Globe, Code2, ExternalLink, X } from 'lucide-react'
-
-// Custom Clean Brand SVG Icons
-function LinkedInIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" {...props}>
-      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
-    </svg>
-  )
-}
-
-function FacebookIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" {...props}>
-      <path d="M12 2.04c-5.5 0-10 4.49-10 10.02 0 5 3.66 9.15 8.44 9.9v-7H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.23.19 2.23.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.45 2.9h-2.33v7a10 10 0 0 0 8.44-9.9c0-5.53-4.5-10.02-10-10.02z"/>
-    </svg>
-  )
-}
+import React from 'react'
+import { MapPin, Clock, Flame, PhoneCall } from 'lucide-react'
 
 export function Footer() {
-  const [devModalOpen, setDevModalOpen] = useState(false)
-
   return (
     <footer className="bg-[#100E0C] text-stone-300 border-t border-amber-500/20 pt-12 pb-8 select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
@@ -86,127 +67,15 @@ export function Footer() {
 
         </div>
 
-        {/* Bottom Bar with Circular Developer Credit Trigger */}
+        {/* Bottom Bar */}
         <div className="pt-6 border-t border-stone-850 text-xs text-stone-500 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© {new Date().getFullYear()} Short Break Food Cart • Helipad, Kalapara, Patuakhali.</p>
-          
-          {/* Circular Developer Credit Trigger Button */}
-          <div className="flex items-center gap-2">
-            <span className="text-stone-400 text-xs">Developed with passion by</span>
-            <button
-              onClick={() => setDevModalOpen(true)}
-              className="group relative inline-flex items-center gap-2 bg-[#1A1815] hover:bg-[#25211D] text-stone-200 py-1 px-2.5 rounded-full border border-amber-500/30 hover:border-amber-400 shadow-md transition-all cursor-pointer active:scale-95"
-              title="Click to view developer profile"
-            >
-              <div className="relative">
-                <img
-                  src="/developer.jpg"
-                  alt="Mushfiq"
-                  className="w-6 h-6 rounded-full object-cover border border-amber-400 ring-1 ring-rose-500 group-hover:scale-110 transition-transform"
-                />
-                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 ring-1 ring-stone-900 animate-pulse" />
-              </div>
-              <span className="text-xs font-bold text-amber-300 group-hover:text-amber-200">
-                Mushfiq
-              </span>
-              <Code2 className="w-3 h-3 text-stone-400 group-hover:text-amber-400" />
-            </button>
-          </div>
+          <p className="text-stone-400 text-xs">
+            Crafted for street food lovers in Kalapara.
+          </p>
         </div>
 
       </div>
-
-      {/* Interactive Developer Credit Modal / Circle Pop-up */}
-      {devModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* Backdrop */}
-          <div 
-            onClick={() => setDevModalOpen(false)}
-            className="absolute inset-0 bg-stone-950/80 backdrop-blur-sm animate-fadeIn cursor-pointer"
-          />
-
-          {/* Modal Pop-up Card */}
-          <div className="relative z-10 w-full max-w-sm glass-panel-dark rounded-3xl p-6 border border-amber-500/30 shadow-[0_20px_50px_rgba(0,0,0,0.8)] text-center animate-slideUp">
-            
-            {/* Close Button */}
-            <button
-              onClick={() => setDevModalOpen(false)}
-              className="absolute top-4 right-4 text-stone-400 hover:text-white p-1.5 rounded-xl hover:bg-stone-800 transition-colors cursor-pointer"
-              aria-label="Close"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            {/* Glowing Circular Avatar */}
-            <div className="relative w-24 h-24 mx-auto mb-4">
-              <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 via-rose-500 to-amber-500 rounded-full blur-sm animate-spin-slow opacity-80" />
-              <img
-                src="/developer.jpg"
-                alt="Mushfiq - Full-Stack Engineer"
-                className="relative w-24 h-24 rounded-full object-cover border-2 border-amber-400 shadow-xl"
-              />
-              <div className="absolute bottom-0 right-0 bg-rose-600 text-white p-1 rounded-full border-2 border-stone-900 shadow-md">
-                <Code2 className="w-3.5 h-3.5" />
-              </div>
-            </div>
-
-            {/* Dev Details */}
-            <div className="space-y-1 mb-4">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-rose-950/80 text-rose-300 border border-rose-800/50 rounded-full text-[10px] font-bold uppercase tracking-wider mb-1">
-                Developer Profile
-              </div>
-              <h3 className="text-xl font-black text-amber-50 font-display">
-                Mushfiq
-              </h3>
-              <p className="text-xs text-amber-400 font-mono font-bold">
-                Full-Stack Software Engineer
-              </p>
-              <p className="text-xs text-stone-400 max-w-xs mx-auto pt-1 leading-relaxed">
-                Specialized in high-performance web apps with React, Tailwind CSS, Vite & Supabase.
-              </p>
-            </div>
-
-            {/* Social / Portfolio Links */}
-            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10">
-              
-              {/* Portfolio */}
-              <a
-                href="https://mushfiq.dev"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col items-center justify-center p-2.5 bg-[#221D18] hover:bg-[#2D2720] text-amber-300 rounded-2xl border border-amber-500/25 transition-all shadow-xs group"
-              >
-                <Globe className="w-4 h-4 mb-1 text-amber-400 group-hover:scale-110 transition-transform" />
-                <span className="text-[11px] font-bold">Portfolio</span>
-              </a>
-
-              {/* LinkedIn */}
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col items-center justify-center p-2.5 bg-[#0077B5]/15 hover:bg-[#0077B5]/30 text-[#38bdf8] rounded-2xl border border-[#0077B5]/30 transition-all shadow-xs group"
-              >
-                <LinkedInIcon className="mb-1 text-[#38bdf8] group-hover:scale-110 transition-transform" />
-                <span className="text-[11px] font-bold">LinkedIn</span>
-              </a>
-
-              {/* Facebook */}
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col items-center justify-center p-2.5 bg-[#1877F2]/15 hover:bg-[#1877F2]/30 text-[#60a5fa] rounded-2xl border border-[#1877F2]/30 transition-all shadow-xs group"
-              >
-                <FacebookIcon className="mb-1 text-[#60a5fa] group-hover:scale-110 transition-transform" />
-                <span className="text-[11px] font-bold">Facebook</span>
-              </a>
-
-            </div>
-
-          </div>
-        </div>
-      )}
     </footer>
   )
 }
