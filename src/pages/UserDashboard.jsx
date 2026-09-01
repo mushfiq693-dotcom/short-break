@@ -3,14 +3,17 @@ import { useAuth } from '../context/AuthContext'
 import { getUserOrders, subscribeToOrders } from '../lib/storage'
 import { OrderCard } from '../components/OrderCard'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
+import { AmbientBackground } from '../components/AmbientBackground'
 import { 
   ShoppingBag, 
   Clock, 
   RotateCw, 
-  ArrowRight, 
   Utensils, 
   Flame, 
-  CheckCircle2 
+  CheckCircle2,
+  Sparkles,
+  User,
+  Phone
 } from 'lucide-react'
 
 export function UserDashboard({ onNavigateHome }) {
@@ -72,112 +75,115 @@ export function UserDashboard({ onNavigateHome }) {
   const completedOrders = orders.filter(o => o.status === 'completed' || o.status === 'cancelled')
 
   return (
-    <div className="cart-pattern-bg min-h-screen pb-24 pt-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto">
-        
-        {/* Header Banner */}
-        <div className="bg-white rounded-3xl border-4 border-stone-900 food-card-shadow p-6 sm:p-8 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <span className="inline-block px-3 py-1 bg-amber-100 text-amber-900 text-xs font-black rounded-full mb-2 uppercase tracking-wide border border-amber-300">
-              Foodie Dashboard
-            </span>
-            <h1 className="text-3xl sm:text-4xl font-black text-stone-900 font-display">
-              Welcome, {user?.name || user?.email?.split('@')[0]}!
-            </h1>
-            <p className="text-stone-600 text-sm mt-1">
-              Track your live food cart orders and browse your past delicious receipts.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={loadOrders}
-              disabled={refreshing}
-              className="p-3 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-xl border-2 border-stone-900 font-bold text-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-              title="Refresh Orders"
-            >
-              <RotateCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">Refresh</span>
-            </button>
-            <button
-              onClick={onNavigateHome}
-              className="food-btn-primary py-3 px-5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
-            >
-              <Utensils className="w-4 h-4" />
-              <span>Order Food</span>
-            </button>
-          </div>
-        </div>
-
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[1, 2].map(n => (
-              <div key={n} className="bg-white rounded-2xl h-48 border-2 border-stone-200 animate-pulse p-6" />
-            ))}
-          </div>
-        ) : orders.length === 0 ? (
-          <div className="bg-white rounded-3xl border-4 border-stone-900 food-card-shadow p-12 text-center max-w-lg mx-auto">
-            <div className="w-20 h-20 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-stone-900">
-              <ShoppingBag className="w-10 h-10" />
+    <AmbientBackground>
+      <div className="min-h-screen pb-24 pt-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto space-y-6">
+          
+          {/* Header Glass Panel */}
+          <div className="glass-panel-dark rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-0.5 bg-amber-400/20 text-amber-300 text-xs font-black rounded-full border border-amber-400/40 uppercase tracking-wider">
+                  <Sparkles className="w-3 h-3 text-amber-400" />
+                  <span>Foodie Customer Portal</span>
+                </span>
+                {user?.phone && (
+                  <span className="text-xs text-stone-400 font-mono flex items-center gap-1">
+                    <Phone className="w-3 h-3 text-amber-400" />
+                    <span>{user.phone}</span>
+                  </span>
+                )}
+              </div>
+              <h1 className="text-2xl sm:text-4xl font-black text-amber-50 font-display">
+                Welcome, {user?.name || user?.email?.split('@')[0]}!
+              </h1>
+              <p className="text-stone-300 text-xs sm:text-sm mt-1">
+                Track your live food cart orders and browse your past receipts.
+              </p>
             </div>
-            <h3 className="text-2xl font-black text-stone-900 mb-2 font-display">No Orders Yet!</h3>
-            <p className="text-stone-600 text-sm mb-6 leading-relaxed">
-              Looks like you haven't ordered from Short Break yet. Pick a Meat Box, Chicken Sandwich, or Peri Peri Fries right now!
-            </p>
-            <button
-              onClick={onNavigateHome}
-              className="food-btn-primary py-3.5 px-6 rounded-xl font-black text-sm uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer"
-            >
-              <span>Explore Street Menu</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={loadOrders}
+                disabled={refreshing}
+                className="px-3.5 py-2.5 bg-stone-900/80 hover:bg-stone-800 text-stone-200 rounded-xl border border-stone-700 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                title="Refresh Orders"
+              >
+                <RotateCw className={`w-3.5 h-3.5 text-amber-400 ${refreshing ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">Refresh</span>
+              </button>
+              <button
+                onClick={onNavigateHome}
+                className="hero-candle-cta px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-md"
+              >
+                <Utensils className="w-3.5 h-3.5" />
+                <span>Order Food</span>
+              </button>
+            </div>
           </div>
-        ) : (
-          <div className="space-y-10">
-            
-            {/* Active / In-Kitchen Orders */}
-            {pendingOrders.length > 0 && (
-              <section>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-3 h-3 rounded-full bg-amber-500 animate-ping" />
-                  <h2 className="text-xl sm:text-2xl font-black text-stone-900 font-display">
-                    Active Kitchen Orders ({pendingOrders.length})
-                  </h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {pendingOrders.map(order => (
-                    <OrderCard
-                      key={order.id}
-                      order={order}
-                      isAdmin={false}
-                    />
-                  ))}
-                </div>
-              </section>
-            )}
 
-            {/* Past Orders History */}
-            {completedOrders.length > 0 && (
-              <section>
-                <h2 className="text-xl sm:text-2xl font-black text-stone-900 font-display mb-4">
-                  Order History ({completedOrders.length})
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {completedOrders.map(order => (
-                    <OrderCard
-                      key={order.id}
-                      order={order}
-                      isAdmin={false}
-                    />
-                  ))}
+          {/* Main Orders Feed */}
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {[1, 2].map(n => (
+                <div key={n} className="glass-panel-dark rounded-2xl h-48 animate-pulse p-6 border border-stone-800" />
+              ))}
+            </div>
+          ) : orders.length === 0 ? (
+            <div className="glass-panel-dark rounded-3xl p-12 text-center max-w-lg mx-auto border border-amber-500/20">
+              <div className="w-16 h-16 bg-amber-400/10 text-amber-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-400/30">
+                <ShoppingBag className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-black text-amber-50 mb-2 font-display">No Orders Placed Yet</h3>
+              <p className="text-stone-300 text-xs sm:text-sm mb-6 leading-relaxed">
+                You haven't ordered any snacks yet. Explore our 3 signature specials and pick up fresh off the cart!
+              </p>
+              <button
+                onClick={onNavigateHome}
+                className="hero-candle-cta py-3 px-6 rounded-xl font-extrabold text-sm uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer shadow-md"
+              >
+                <Utensils className="w-4 h-4" />
+                <span>Explore The 3 Specials</span>
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              
+              {/* Active / Pending Orders */}
+              {pendingOrders.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="text-base font-black text-amber-400 flex items-center gap-2 font-display uppercase tracking-wider">
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping inline-block" />
+                    <span>Active Orders in Queue ({pendingOrders.length})</span>
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {pendingOrders.map(order => (
+                      <OrderCard key={order.id} order={order} />
+                    ))}
+                  </div>
                 </div>
-              </section>
-            )}
+              )}
 
-          </div>
-        )}
+              {/* Completed / Past Orders */}
+              {completedOrders.length > 0 && (
+                <div className="space-y-3 pt-4">
+                  <h3 className="text-sm font-bold text-stone-400 flex items-center gap-2 font-display uppercase tracking-wider">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span>Past Order Receipts ({completedOrders.length})</span>
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {completedOrders.map(order => (
+                      <OrderCard key={order.id} order={order} />
+                    ))}
+                  </div>
+                </div>
+              )}
 
+            </div>
+          )}
+
+        </div>
       </div>
-    </div>
+    </AmbientBackground>
   )
 }

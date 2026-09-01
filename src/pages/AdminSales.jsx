@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { getAllOrders } from '../lib/storage'
+import { AmbientBackground } from '../components/AmbientBackground'
 import { 
   TrendingUp, 
   DollarSign, 
@@ -11,7 +12,9 @@ import {
   CheckCircle2, 
   Clock, 
   Download,
-  Flame
+  Flame,
+  User,
+  Phone
 } from 'lucide-react'
 
 export function AdminSales({ onNavigateToOrders }) {
@@ -65,17 +68,17 @@ export function AdminSales({ onNavigateToOrders }) {
     })
   }, [orders, timeRange])
 
-  // Compute Metrics
-  const metrics = useMemo(() => {
+  // Aggregate Metrics & Best-Seller Breakdowns
+  const stats = useMemo(() => {
     const validOrders = filteredOrders.filter(o => o.status !== 'cancelled')
-    const totalRevenue = validOrders.reduce((sum, o) => sum + Number(o.total_price), 0)
+    const totalRevenue = validOrders.reduce((acc, curr) => acc + (Number(curr.total_price) || 0), 0)
     const totalOrdersCount = filteredOrders.length
     const completedCount = filteredOrders.filter(o => o.status === 'completed').length
-    const avgOrderValue = validOrders.length > 0 ? (totalRevenue / validOrders.length).toFixed(0) : 0
+    const avgOrderValue = validOrders.length > 0 ? Math.round(totalRevenue / validOrders.length) : 0
 
     // Item sales breakdown
     const itemStats = {
-      'Meat Box': { name: 'Meat Box', units: 0, revenue: 0, price: 100, emoji: '📦' },
+      'Meat Box': { name: 'Meat Box', units: 0, revenue: 0, price: 100, emoji: '🍱' },
       'Grilled Chicken Sandwich': { name: 'Grilled Chicken Sandwich', units: 0, revenue: 0, price: 60, emoji: '🥪' },
       'French Fries': { name: 'French Fries', units: 0, revenue: 0, price: 50, emoji: '🍟' }
     }
@@ -128,263 +131,236 @@ export function AdminSales({ onNavigateToOrders }) {
     const encodedUri = encodeURI(csvContent)
     const link = document.createElement('a')
     link.setAttribute('href', encodedUri)
-    link.setAttribute('download', `short_break_sales_${timeRange}_${new Date().toISOString().slice(0,10)}.csv`)
+    link.setAttribute('download', `short_break_sales_${timeRange}_${new Date().toISOString().slice(0, 10)}.csv`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
   }
 
   return (
-    <div className="cart-pattern-bg min-h-screen pb-24 pt-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        
-        {/* Header Banner */}
-        <div className="bg-[#18181B] text-white rounded-3xl border-4 border-amber-400 p-6 sm:p-8 shadow-[6px_6px_0px_#1C1917] flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="px-3 py-1 bg-amber-400 text-stone-900 text-xs font-black rounded-full uppercase tracking-wider">
-                Sales Analytics
-              </span>
-              <span className="text-xs text-stone-400 font-mono">
-                Short Break Food Cart Records
-              </span>
+    <AmbientBackground>
+      <div className="min-h-screen pb-24 pt-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto space-y-6">
+          
+          {/* Header Banner */}
+          <div className="glass-panel-dark rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-3 py-0.5 bg-amber-400/20 text-amber-300 text-xs font-black rounded-full uppercase tracking-wider border border-amber-400/40">
+                  Sales Analytics
+                </span>
+                <span className="text-xs text-stone-400 font-mono">
+                  Short Break Food Cart Records
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-4xl font-black text-amber-50 font-display">
+                Revenue & Best-Sellers Overview
+              </h1>
+              <p className="text-stone-300 text-xs sm:text-sm mt-1">
+                Analyze cart sales, top selling items, and customer order history.
+              </p>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-black text-white font-display">
-              Revenue & Best-Sellers Overview
-            </h1>
-            <p className="text-stone-300 text-xs sm:text-sm mt-1">
-              Analyze cart sales, top selling items, and customer order history.
-            </p>
+
+            <div className="flex flex-wrap items-center gap-2.5">
+              <button
+                onClick={onNavigateToOrders}
+                className="py-2.5 px-4 bg-stone-900/90 hover:bg-stone-800 text-stone-200 rounded-xl border border-stone-700 font-bold text-xs flex items-center gap-1.5 cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Kitchen Queue</span>
+              </button>
+
+              <button
+                onClick={exportCSV}
+                className="hero-candle-cta py-2.5 px-4 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-md"
+              >
+                <Download className="w-4 h-4" />
+                <span>Export CSV</span>
+              </button>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={onNavigateToOrders}
-              className="py-3 px-4 bg-stone-800 hover:bg-stone-700 text-white rounded-xl border-2 border-stone-700 font-bold text-xs flex items-center gap-1.5 cursor-pointer"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Kitchen Orders</span>
-            </button>
-
-            <button
-              onClick={exportCSV}
-              className="food-btn-secondary py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
-            >
-              <Download className="w-4 h-4" />
-              <span>Export CSV</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Time Range Filter Selector */}
-        <div className="bg-white p-3 rounded-2xl border-2 border-stone-900 food-card-shadow flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-2 text-xs font-black text-stone-700">
-            <Calendar className="w-4 h-4 text-rose-600" />
-            <span>Time Window:</span>
-          </div>
-
-          <div className="flex items-center gap-2">
+          {/* Time Filter Tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
             {[
-              { id: 'today', label: 'Today' },
+              { id: 'all', label: 'All Time' },
+              { id: 'today', label: 'Today (Live)' },
               { id: 'week', label: 'This Week' },
-              { id: 'month', label: 'This Month' },
-              { id: 'all', label: 'All Time' }
+              { id: 'month', label: 'This Month' }
             ].map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setTimeRange(tab.id)}
-                className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   timeRange === tab.id
-                    ? 'bg-amber-400 text-stone-950 border-2 border-stone-900 shadow-[2px_2px_0px_#1C1917]'
-                    : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
+                    ? 'hero-candle-cta shadow-md'
+                    : 'glass-panel-dark text-stone-300 hover:text-white'
                 }`}
               >
                 {tab.label}
               </button>
             ))}
           </div>
-        </div>
 
-        {/* 4 Metric Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          
-          <div className="bg-white p-5 rounded-2xl border-2 border-stone-900 food-card-shadow">
-            <span className="text-xs font-black text-stone-500 uppercase tracking-wider">Total Sales Revenue</span>
-            <div className="text-3xl sm:text-4xl font-black text-rose-600 font-display mt-2">
-              ৳{metrics.totalRevenue}
+          {/* Key KPI Stats Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            {/* Total Revenue */}
+            <div className="glass-panel-dark rounded-2xl p-5 border border-amber-500/20">
+              <div className="flex items-center justify-between text-stone-400 mb-2">
+                <span className="text-xs font-bold uppercase tracking-wider">Total Revenue</span>
+                <span className="p-2 bg-amber-400/10 text-amber-400 rounded-lg">৳</span>
+              </div>
+              <div className="text-3xl font-black text-amber-300 font-display">
+                ৳{stats.totalRevenue.toLocaleString()}
+              </div>
+              <p className="text-[11px] text-stone-400 mt-1">Excludes cancelled orders</p>
             </div>
-            <p className="text-xs text-stone-500 font-medium mt-1">Across {timeRange} orders</p>
+
+            {/* Total Orders */}
+            <div className="glass-panel-dark rounded-2xl p-5 border border-amber-500/20">
+              <div className="flex items-center justify-between text-stone-400 mb-2">
+                <span className="text-xs font-bold uppercase tracking-wider">Total Orders</span>
+                <ShoppingBag className="w-4 h-4 text-amber-400" />
+              </div>
+              <div className="text-3xl font-black text-white font-display">
+                {stats.totalOrdersCount}
+              </div>
+              <p className="text-[11px] text-stone-400 mt-1">{stats.completedCount} successfully served</p>
+            </div>
+
+            {/* Units Sold */}
+            <div className="glass-panel-dark rounded-2xl p-5 border border-amber-500/20">
+              <div className="flex items-center justify-between text-stone-400 mb-2">
+                <span className="text-xs font-bold uppercase tracking-wider">Items Cooked</span>
+                <Flame className="w-4 h-4 text-rose-500" />
+              </div>
+              <div className="text-3xl font-black text-white font-display">
+                {stats.totalUnitsSold}
+              </div>
+              <p className="text-[11px] text-stone-400 mt-1">Across 3 fixed specials</p>
+            </div>
+
+            {/* Average Order Value */}
+            <div className="glass-panel-dark rounded-2xl p-5 border border-amber-500/20">
+              <div className="flex items-center justify-between text-stone-400 mb-2">
+                <span className="text-xs font-bold uppercase tracking-wider">Avg Order Value</span>
+                <BarChart3 className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div className="text-3xl font-black text-amber-300 font-display">
+                ৳{stats.avgOrderValue}
+              </div>
+              <p className="text-[11px] text-stone-400 mt-1">Per paying customer</p>
+            </div>
+
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border-2 border-stone-900 food-card-shadow">
-            <span className="text-xs font-black text-stone-500 uppercase tracking-wider">Total Orders Count</span>
-            <div className="text-3xl sm:text-4xl font-black text-stone-900 font-display mt-2">
-              {metrics.totalOrdersCount}
-            </div>
-            <p className="text-xs text-emerald-600 font-bold mt-1">
-              {metrics.completedCount} successfully completed
-            </p>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl border-2 border-stone-900 food-card-shadow">
-            <span className="text-xs font-black text-stone-500 uppercase tracking-wider">Average Order Value (AOV)</span>
-            <div className="text-3xl sm:text-4xl font-black text-amber-500 font-display mt-2">
-              ৳{metrics.avgOrderValue}
-            </div>
-            <p className="text-xs text-stone-500 font-medium mt-1">Per customer checkout</p>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl border-2 border-stone-900 food-card-shadow">
-            <span className="text-xs font-black text-stone-500 uppercase tracking-wider">Food Portions Cooked</span>
-            <div className="text-3xl sm:text-4xl font-black text-stone-900 font-display mt-2">
-              {metrics.totalUnitsSold}
-            </div>
-            <p className="text-xs text-stone-500 font-medium mt-1">Total units served</p>
-          </div>
-
-        </div>
-
-        {/* Best-Selling Item Breakdown */}
-        <div className="bg-white p-6 sm:p-8 rounded-3xl border-4 border-stone-900 food-card-shadow space-y-6">
-          <div className="flex items-center justify-between border-b-2 border-stone-200 pb-4">
+          {/* 3 Best-Seller Breakdown Showcase */}
+          <div className="glass-panel-dark rounded-2xl p-6 sm:p-8 space-y-5">
             <div>
-              <span className="inline-block px-3 py-0.5 bg-rose-100 text-rose-800 text-xs font-black rounded-full mb-1 uppercase tracking-wider">
-                Top Performers
-              </span>
-              <h2 className="text-2xl font-black text-stone-900 font-display">
-                Best-Selling Item Breakdown
-              </h2>
+              <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Product Performance</span>
+              <h3 className="text-xl font-black text-white font-display">The 3 Signature Items Breakdown</h3>
             </div>
-            <span className="text-xs font-bold text-stone-500 font-mono">
-              3-Item Performance
-            </span>
-          </div>
 
-          <div className="space-y-5">
-            {metrics.sortedItems.map((item, idx) => {
-              const percentage = metrics.totalUnitsSold > 0 
-                ? Math.round((item.units / metrics.totalUnitsSold) * 100) 
-                : 0
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {stats.sortedItems.map((item, idx) => {
+                const percentage = stats.totalUnitsSold > 0 
+                  ? Math.round((item.units / stats.totalUnitsSold) * 100) 
+                  : 0
 
-              return (
-                <div key={item.name} className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">{item.emoji}</span>
-                      <span className="font-black text-stone-900 font-display text-base">
-                        #{idx + 1} {item.name}
-                      </span>
-                      <span className="text-xs text-stone-500 font-medium">
-                        (৳{item.price}/unit)
+                return (
+                  <div key={item.name} className="bg-[#1C1814] rounded-xl p-4 border border-white/10 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">{item.emoji}</span>
+                        <div>
+                          <h4 className="font-bold text-white text-sm">{item.name}</h4>
+                          <span className="text-xs text-amber-400 font-mono">৳{item.price} each</span>
+                        </div>
+                      </div>
+                      <span className="text-xs font-mono bg-white/5 px-2 py-1 rounded text-stone-400">
+                        Rank #{idx + 1}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                      <span className="font-mono font-bold text-stone-700 text-xs">
-                        {item.units} units sold
-                      </span>
-                      <span className="font-black text-rose-600 font-display text-base">
-                        ৳{item.revenue}
-                      </span>
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs font-medium text-stone-300">
+                        <span>{item.units} units sold</span>
+                        <span className="font-bold text-amber-300">৳{item.revenue.toLocaleString()}</span>
+                      </div>
+                      <div className="w-full bg-stone-800 h-2 rounded-full overflow-hidden">
+                        <div 
+                          className="bg-gradient-to-r from-amber-400 to-amber-500 h-full rounded-full transition-all duration-500"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
                     </div>
                   </div>
-
-                  {/* Visual Progress Bar */}
-                  <div className="w-full bg-stone-100 h-4 rounded-full overflow-hidden border border-stone-300 relative">
-                    <div
-                      className={`h-full rounded-full transition-all duration-700 ${
-                        idx === 0 
-                          ? 'bg-rose-600' 
-                          : idx === 1 
-                            ? 'bg-amber-400' 
-                            : 'bg-emerald-500'
-                      }`}
-                      style={{ width: `${Math.max(percentage, 5)}%` }}
-                    />
-                  </div>
-                  <div className="flex justify-between text-[11px] font-bold text-stone-500">
-                    <span>{percentage}% of total units</span>
-                    <span>Revenue Share: {metrics.totalRevenue > 0 ? Math.round((item.revenue / metrics.totalRevenue) * 100) : 0}%</span>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Data-Dense All Orders Log Table */}
-        <div className="bg-white rounded-3xl border-4 border-stone-900 food-card-shadow overflow-hidden">
-          <div className="p-6 border-b-2 border-stone-200 flex items-center justify-between">
-            <h2 className="text-xl font-black text-stone-900 font-display">
-              All Customer Orders Log ({filteredOrders.length})
-            </h2>
-            <span className="text-xs text-stone-500 font-mono">Live DB Sync</span>
+                )
+              })}
+            </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-stone-900 text-amber-300 uppercase tracking-wider font-mono font-bold text-[11px]">
-                <tr>
-                  <th className="py-3 px-4">Order ID</th>
-                  <th className="py-3 px-4">Time</th>
-                  <th className="py-3 px-4">Customer</th>
-                  <th className="py-3 px-4">Items Breakdown</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4 text-right">Total Bill</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-stone-200">
-                {filteredOrders.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="py-8 text-center text-stone-500">
-                      No order records found for this time window.
-                    </td>
+          {/* Comprehensive Order History Table */}
+          <div className="glass-panel-dark rounded-2xl p-6 overflow-hidden">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-black text-white font-display">All Registered Orders</h3>
+              <span className="text-xs text-stone-400 font-mono">Showing {filteredOrders.length} records</span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs sm:text-sm">
+                <thead>
+                  <tr className="border-b border-white/10 text-stone-400 text-[11px] uppercase tracking-wider">
+                    <th className="py-3 px-3">Order ID</th>
+                    <th className="py-3 px-3">Time</th>
+                    <th className="py-3 px-3">Customer</th>
+                    <th className="py-3 px-3">Items Ordered</th>
+                    <th className="py-3 px-3">Status</th>
+                    <th className="py-3 px-3 text-right">Total</th>
                   </tr>
-                ) : (
-                  filteredOrders.map(order => (
-                    <tr key={order.id} className="hover:bg-amber-50/50 transition-colors">
-                      <td className="py-3 px-4 font-mono font-bold text-stone-900">
+                </thead>
+                <tbody className="divide-y divide-white/5 font-medium">
+                  {filteredOrders.map(order => (
+                    <tr key={order.id} className="hover:bg-white/[0.02] transition-colors">
+                      <td className="py-3 px-3 font-mono text-amber-300 font-bold">
                         #{order.id.slice(-6).toUpperCase()}
                       </td>
-                      <td className="py-3 px-4 text-stone-600 whitespace-nowrap">
-                        {new Date(order.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' })} at {new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      <td className="py-3 px-3 text-stone-400 text-xs">
+                        {new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </td>
-                      <td className="py-3 px-4 font-bold text-stone-900">
-                        {order.customer_name || 'Customer'}
-                        {order.customer_phone && (
-                          <span className="block text-[10px] text-stone-500 font-mono font-normal">
-                            {order.customer_phone}
-                          </span>
-                        )}
+                      <td className="py-3 px-3">
+                        <div className="text-stone-200 font-bold">{order.customer_name || 'Customer'}</div>
+                        <div className="text-[11px] text-stone-400 font-mono">{order.customer_phone || 'No phone'}</div>
                       </td>
-                      <td className="py-3 px-4 text-stone-700">
-                        {order.items?.map(i => `${i.quantity}x ${i.name}`).join(', ') || '3-Item Combo'}
+                      <td className="py-3 px-3 text-stone-300">
+                        {order.items?.map(i => `${i.quantity}x ${i.name}`).join(', ') || 'N/A'}
                       </td>
-                      <td className="py-3 px-4">
-                        <span className={`inline-block px-2 py-0.5 rounded-full font-bold uppercase text-[10px] ${
-                          order.status === 'completed' 
-                            ? 'bg-emerald-100 text-emerald-800' 
+                      <td className="py-3 px-3">
+                        <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                          order.status === 'pending'
+                            ? 'bg-amber-500/20 text-amber-300'
                             : order.status === 'confirmed'
-                              ? 'bg-blue-100 text-blue-800'
-                              : order.status === 'cancelled'
-                                ? 'bg-rose-100 text-rose-800'
-                                : 'bg-amber-100 text-amber-800'
+                              ? 'bg-orange-500/20 text-orange-300'
+                              : order.status === 'completed'
+                                ? 'bg-emerald-500/20 text-emerald-300'
+                                : 'bg-rose-500/20 text-rose-300'
                         }`}>
                           {order.status}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-right font-mono font-black text-sm text-stone-900">
+                      <td className="py-3 px-3 text-right font-mono font-bold text-amber-300">
                         ৳{order.total_price}
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
 
+        </div>
       </div>
-    </div>
+    </AmbientBackground>
   )
 }

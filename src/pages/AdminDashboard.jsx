@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { getAllOrders, updateOrderStatus, subscribeToOrders } from '../lib/storage'
 import { OrderCard } from '../components/OrderCard'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
+import { AmbientBackground } from '../components/AmbientBackground'
 import { 
   ShieldCheck, 
   RotateCw, 
-  Filter, 
   Flame, 
   Search, 
   CheckCircle2, 
@@ -64,16 +64,15 @@ export function AdminDashboard({ onNavigateToSales }) {
   useEffect(() => {
     loadOrders()
 
-    // 1. Supabase Realtime channel subscription for all orders
+    // 1. Supabase Realtime channel
     let channel
     if (isSupabaseConfigured && supabase) {
       channel = supabase
-        .channel('admin-all-orders')
+        .channel('admin-orders-stream')
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'orders' },
           (payload) => {
-            console.log('Admin Realtime Order Event:', payload)
             if (payload.eventType === 'INSERT') {
               playAlertSound()
             }
@@ -127,175 +126,168 @@ export function AdminDashboard({ onNavigateToSales }) {
   const completedCount = orders.filter(o => o.status === 'completed').length
 
   return (
-    <div className="cart-pattern-bg min-h-screen pb-24 pt-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        
-        {/* Admin Header Banner */}
-        <div className="bg-[#18181B] text-white rounded-3xl border-4 border-amber-400 p-6 sm:p-8 shadow-[6px_6px_0px_#1C1917] flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="px-3 py-1 bg-rose-600 text-white text-xs font-black rounded-full uppercase tracking-wider border border-rose-400">
-                Cart Manager Portal
-              </span>
-              <span className="flex items-center gap-1.5 text-xs text-amber-400 font-bold bg-stone-800 px-2.5 py-1 rounded-full">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                Live Kitchen Stream
-              </span>
+    <AmbientBackground>
+      <div className="min-h-screen pb-24 pt-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto space-y-6">
+          
+          {/* Admin Header Banner */}
+          <div className="glass-panel-dark rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-3 py-0.5 bg-rose-600/90 text-white text-xs font-black rounded-full uppercase tracking-wider border border-rose-400/40">
+                  Cart Manager Portal
+                </span>
+                <span className="flex items-center gap-1.5 text-xs text-amber-300 font-bold bg-[#241F1A] px-2.5 py-0.5 rounded-full border border-amber-500/20">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  Live Kitchen Stream
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-4xl font-black text-amber-50 font-display">
+                Incoming Orders & Grill Queue
+              </h1>
+              <p className="text-stone-300 text-xs sm:text-sm mt-1">
+                Real-time feed of orders placed by customers. Accept, prepare, and mark ready.
+              </p>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-black text-white font-display">
-              Incoming Orders & Grill Queue
-            </h1>
-            <p className="text-stone-300 text-xs sm:text-sm mt-1">
-              Real-time feed of orders placed by customers. Accept, prepare, and mark ready.
-            </p>
+
+            {/* Action Bar */}
+            <div className="flex flex-wrap items-center gap-2.5">
+              <button
+                onClick={() => setSoundEnabled(!soundEnabled)}
+                className={`p-2.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                  soundEnabled 
+                    ? 'bg-amber-400/20 text-amber-300 border-amber-400/50' 
+                    : 'bg-stone-900 text-stone-400 border-stone-800'
+                }`}
+                title={soundEnabled ? 'Mute Alert Chime' : 'Enable Alert Chime'}
+              >
+                {soundEnabled ? <Volume2 className="w-4 h-4 text-amber-400" /> : <VolumeX className="w-4 h-4" />}
+                <span className="hidden sm:inline">{soundEnabled ? 'Chime ON' : 'Chime OFF'}</span>
+              </button>
+
+              <button
+                onClick={loadOrders}
+                disabled={refreshing}
+                className="p-2.5 bg-stone-900/90 hover:bg-stone-800 text-stone-200 rounded-xl border border-stone-700 font-bold text-xs flex items-center gap-1.5 cursor-pointer"
+              >
+                <RotateCw className={`w-3.5 h-3.5 text-amber-400 ${refreshing ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">Refresh</span>
+              </button>
+
+              <button
+                onClick={onNavigateToSales}
+                className="hero-candle-cta py-2.5 px-4 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-md"
+              >
+                <TrendingUp className="w-3.5 h-3.5" />
+                <span>Sales Overview</span>
+              </button>
+            </div>
           </div>
 
-          {/* Action Bar */}
-          <div className="flex flex-wrap items-center gap-3">
+          {/* Status Counters */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <button
-              onClick={() => setSoundEnabled(!soundEnabled)}
-              className={`p-3 rounded-xl border-2 border-stone-700 text-xs font-bold flex items-center gap-1.5 transition-colors ${
-                soundEnabled ? 'bg-amber-400 text-stone-900 border-amber-400' : 'bg-stone-800 text-stone-400'
+              onClick={() => setStatusFilter('all')}
+              className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                statusFilter === 'all'
+                  ? 'bg-amber-400/20 border-amber-400 text-amber-200 shadow-md'
+                  : 'glass-panel-dark text-stone-300 hover:border-amber-500/40'
               }`}
-              title={soundEnabled ? 'Mute Alert Chime' : 'Enable Alert Chime'}
             >
-              {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-              <span className="hidden sm:inline">{soundEnabled ? 'Chime ON' : 'Chime OFF'}</span>
+              <span className="text-xs font-bold uppercase tracking-wider opacity-70">All Orders</span>
+              <div className="text-2xl sm:text-3xl font-black font-display mt-1 text-white">{orders.length}</div>
             </button>
 
             <button
-              onClick={loadOrders}
-              disabled={refreshing}
-              className="p-3 bg-stone-800 hover:bg-stone-700 text-white rounded-xl border-2 border-stone-700 font-bold text-xs flex items-center gap-1.5 cursor-pointer"
+              onClick={() => setStatusFilter('pending')}
+              className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                statusFilter === 'pending'
+                  ? 'bg-amber-500/25 border-amber-400 text-amber-300 shadow-md ring-1 ring-amber-400'
+                  : 'glass-panel-dark text-stone-300 hover:border-amber-500/40'
+              }`}
             >
-              <RotateCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-              <span>Refresh</span>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Needs Call</span>
+                {pendingCount > 0 && <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />}
+              </div>
+              <div className="text-2xl sm:text-3xl font-black font-display mt-1 text-amber-300">{pendingCount}</div>
             </button>
 
             <button
-              onClick={onNavigateToSales}
-              className="food-btn-secondary py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
+              onClick={() => setStatusFilter('confirmed')}
+              className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                statusFilter === 'confirmed'
+                  ? 'bg-orange-500/25 border-orange-400 text-orange-300 shadow-md'
+                  : 'glass-panel-dark text-stone-300 hover:border-orange-500/40'
+              }`}
             >
-              <TrendingUp className="w-4 h-4" />
-              <span>Sales Overview</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-orange-400">On Grill</span>
+              <div className="text-2xl sm:text-3xl font-black font-display mt-1 text-orange-300">{confirmedCount}</div>
+            </button>
+
+            <button
+              onClick={() => setStatusFilter('completed')}
+              className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                statusFilter === 'completed'
+                  ? 'bg-emerald-500/25 border-emerald-400 text-emerald-300 shadow-md'
+                  : 'glass-panel-dark text-stone-300 hover:border-emerald-500/40'
+              }`}
+            >
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Served</span>
+              <div className="text-2xl sm:text-3xl font-black font-display mt-1 text-emerald-300">{completedCount}</div>
             </button>
           </div>
-        </div>
 
-        {/* Status Counters */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <button
-            onClick={() => setStatusFilter('all')}
-            className={`p-4 rounded-2xl border-2 border-stone-900 text-left transition-all ${
-              statusFilter === 'all'
-                ? 'bg-stone-900 text-white shadow-[4px_4px_0px_#F59E0B]'
-                : 'bg-white text-stone-900 food-card-shadow'
-            }`}
-          >
-            <span className="text-xs font-bold uppercase tracking-wider opacity-70">All Orders</span>
-            <div className="text-2xl sm:text-3xl font-black font-display mt-1">{orders.length}</div>
-          </button>
-
-          <button
-            onClick={() => setStatusFilter('pending')}
-            className={`p-4 rounded-2xl border-2 border-stone-900 text-left transition-all relative ${
-              statusFilter === 'pending'
-                ? 'bg-amber-400 text-stone-900 shadow-[4px_4px_0px_#1C1917]'
-                : 'bg-white text-stone-900 food-card-shadow'
-            }`}
-          >
-            {pendingCount > 0 && (
-              <span className="absolute top-3 right-3 w-3 h-3 rounded-full bg-rose-600 animate-ping" />
-            )}
-            <span className="text-xs font-bold uppercase tracking-wider opacity-80">Pending ⏳</span>
-            <div className="text-2xl sm:text-3xl font-black font-display mt-1 text-amber-900">{pendingCount}</div>
-          </button>
-
-          <button
-            onClick={() => setStatusFilter('confirmed')}
-            className={`p-4 rounded-2xl border-2 border-stone-900 text-left transition-all ${
-              statusFilter === 'confirmed'
-                ? 'bg-blue-600 text-white shadow-[4px_4px_0px_#1C1917]'
-                : 'bg-white text-stone-900 food-card-shadow'
-            }`}
-          >
-            <span className="text-xs font-bold uppercase tracking-wider opacity-80">On Grill 👨‍🍳</span>
-            <div className="text-2xl sm:text-3xl font-black font-display mt-1">{confirmedCount}</div>
-          </button>
-
-          <button
-            onClick={() => setStatusFilter('completed')}
-            className={`p-4 rounded-2xl border-2 border-stone-900 text-left transition-all ${
-              statusFilter === 'completed'
-                ? 'bg-emerald-600 text-white shadow-[4px_4px_0px_#1C1917]'
-                : 'bg-white text-stone-900 food-card-shadow'
-            }`}
-          >
-            <span className="text-xs font-bold uppercase tracking-wider opacity-80">Completed 🎉</span>
-            <div className="text-2xl sm:text-3xl font-black font-display mt-1">{completedCount}</div>
-          </button>
-        </div>
-
-        {/* Filter & Search Toolbar */}
-        <div className="bg-white p-4 rounded-2xl border-2 border-stone-900 food-card-shadow flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="relative w-full sm:w-80">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
+          {/* Search & Filter Bar */}
+          <div className="glass-panel-dark rounded-xl p-3 flex items-center gap-3">
+            <Search className="w-4 h-4 text-amber-400 shrink-0" />
             <input
               type="text"
-              placeholder="Search by customer, item, or ID..."
+              placeholder="Search by customer name, phone number, or order ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 text-xs bg-stone-50 rounded-xl border border-stone-300 focus:outline-hidden focus:ring-2 focus:ring-amber-400 font-medium"
+              className="bg-transparent border-0 text-white placeholder:text-stone-500 text-xs sm:text-sm focus:outline-hidden w-full"
             />
-          </div>
-
-          <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto text-xs font-bold">
-            <span className="text-stone-500 whitespace-nowrap">Filter Status:</span>
-            {['all', 'pending', 'confirmed', 'completed', 'cancelled'].map(st => (
+            {searchQuery && (
               <button
-                key={st}
-                onClick={() => setStatusFilter(st)}
-                className={`px-3 py-1.5 rounded-lg capitalize whitespace-nowrap transition-colors ${
-                  statusFilter === st
-                    ? 'bg-stone-900 text-white'
-                    : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
-                }`}
+                onClick={() => setSearchQuery('')}
+                className="text-xs text-stone-400 hover:text-white px-2 py-1 bg-stone-800 rounded cursor-pointer"
               >
-                {st}
+                Clear
               </button>
-            ))}
+            )}
           </div>
+
+          {/* Orders Stream Grid */}
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[1, 2, 3].map(n => (
+                <div key={n} className="glass-panel-dark rounded-2xl h-64 animate-pulse p-6" />
+              ))}
+            </div>
+          ) : filteredOrders.length === 0 ? (
+            <div className="glass-panel-dark rounded-2xl p-12 text-center max-w-md mx-auto">
+              <Clock className="w-10 h-10 text-amber-400 mx-auto mb-3 opacity-60" />
+              <h3 className="text-lg font-black text-amber-50 mb-1 font-display">No Orders Found</h3>
+              <p className="text-xs text-stone-400">
+                {searchQuery ? 'No orders match your search term.' : 'There are currently no orders in this status category.'}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {filteredOrders.map(order => (
+                <OrderCard
+                  key={order.id}
+                  order={order}
+                  isAdmin={true}
+                  onUpdateStatus={handleStatusChange}
+                />
+              ))}
+            </div>
+          )}
+
         </div>
-
-        {/* Orders Grid */}
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map(n => (
-              <div key={n} className="bg-white rounded-2xl h-64 border-2 border-stone-200 animate-pulse p-6" />
-            ))}
-          </div>
-        ) : filteredOrders.length === 0 ? (
-          <div className="bg-white rounded-3xl border-4 border-stone-900 food-card-shadow p-12 text-center max-w-md mx-auto">
-            <CheckCircle2 className="w-16 h-16 text-stone-400 mx-auto mb-3" />
-            <h3 className="text-xl font-black text-stone-900 font-display">No Orders Found</h3>
-            <p className="text-stone-500 text-xs mt-1">
-              No orders matching current filter "{statusFilter}".
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredOrders.map(order => (
-              <OrderCard
-                key={order.id}
-                order={order}
-                isAdmin={true}
-                onUpdateStatus={handleStatusChange}
-              />
-            ))}
-          </div>
-        )}
-
       </div>
-    </div>
+    </AmbientBackground>
   )
 }

@@ -18,31 +18,31 @@ export function OrderCard({ order, isAdmin = false, onUpdateStatus }) {
     switch (status) {
       case 'pending':
         return {
-          bg: 'bg-amber-100 text-amber-900 border-amber-400',
-          icon: <PhoneCall className="w-3.5 h-3.5 text-amber-600 animate-bounce" />,
-          label: 'Awaiting Call Confirmation 📞'
+          bg: 'bg-amber-500/20 text-amber-300 border-amber-400/40',
+          icon: <PhoneCall className="w-3.5 h-3.5 text-amber-400 animate-bounce" />,
+          label: 'Awaiting Call Confirmation'
         }
       case 'confirmed':
         return {
-          bg: 'bg-blue-100 text-blue-900 border-blue-400',
-          icon: <ChefHat className="w-3.5 h-3.5 text-blue-600" />,
-          label: 'Confirmed by Call • On Grill 👨‍🍳'
+          bg: 'bg-orange-500/20 text-orange-300 border-orange-400/40',
+          icon: <ChefHat className="w-3.5 h-3.5 text-orange-400" />,
+          label: 'Confirmed • On Grill 👨‍🍳'
         }
       case 'completed':
         return {
-          bg: 'bg-emerald-100 text-emerald-900 border-emerald-400',
-          icon: <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />,
+          bg: 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40',
+          icon: <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />,
           label: 'Ready / Served 🎉'
         }
       case 'cancelled':
         return {
-          bg: 'bg-rose-100 text-rose-900 border-rose-400',
-          icon: <XCircle className="w-3.5 h-3.5 text-rose-600" />,
+          bg: 'bg-rose-950/60 text-rose-300 border-rose-800/50',
+          icon: <XCircle className="w-3.5 h-3.5 text-rose-400" />,
           label: 'Cancelled'
         }
       default:
         return {
-          bg: 'bg-stone-100 text-stone-800 border-stone-300',
+          bg: 'bg-stone-800 text-stone-300 border-stone-700',
           icon: <Clock className="w-3.5 h-3.5" />,
           label: status
         }
@@ -61,18 +61,18 @@ export function OrderCard({ order, isAdmin = false, onUpdateStatus }) {
   })
 
   return (
-    <div className={`bg-white rounded-2xl border-2 border-stone-900 food-card-shadow p-5 flex flex-col justify-between transition-all ${
-      order.status === 'pending' ? 'ring-2 ring-amber-400 ring-offset-2' : ''
+    <div className={`glass-panel-dark rounded-2xl p-5 flex flex-col justify-between transition-all ${
+      order.status === 'pending' ? 'ring-1 ring-amber-400/50' : ''
     }`}>
       
       {/* Top Header */}
       <div>
-        <div className="flex items-center justify-between pb-3 border-b border-stone-200 gap-2 flex-wrap">
+        <div className="flex items-center justify-between pb-3 border-b border-white/10 gap-2 flex-wrap">
           <div className="flex items-center gap-2">
-            <span className="font-mono font-black text-sm text-stone-900 bg-amber-200/80 px-2 py-0.5 rounded-md border border-stone-900">
+            <span className="font-mono font-black text-xs text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/30">
               #{order.id.slice(-6).toUpperCase()}
             </span>
-            <span className="text-xs text-stone-500 font-medium">
+            <span className="text-xs text-stone-400 font-medium">
               {formattedDay} at {formattedDate}
             </span>
           </div>
@@ -84,143 +84,120 @@ export function OrderCard({ order, isAdmin = false, onUpdateStatus }) {
         </div>
 
         {/* Customer & Phone Banner */}
-        <div className="mt-3 bg-amber-50/80 p-3 rounded-xl border-2 border-amber-300/80 space-y-1.5">
+        <div className="mt-3 bg-[#1D1915] p-3 rounded-xl border border-amber-500/20 space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-stone-500 font-bold uppercase text-[10px]">Customer Details</span>
-            <span className="text-stone-500 font-mono text-[10px]">Call for verification</span>
+            <span className="text-stone-400 font-bold uppercase text-[10px] tracking-wider">Customer Contact</span>
+            <span className="text-stone-400 font-mono text-[10px]">Verification Line</span>
           </div>
 
           <div className="flex items-center justify-between gap-2 flex-wrap">
-            <div className="flex items-center gap-1.5 font-black text-stone-900 text-sm">
-              <User className="w-4 h-4 text-rose-600" />
+            <div className="flex items-center gap-1.5 font-bold text-white text-sm">
+              <User className="w-3.5 h-3.5 text-rose-400" />
               <span>{order.customer_name || 'Customer'}</span>
             </div>
 
             {order.customer_phone ? (
               <a
                 href={`tel:${order.customer_phone}`}
-                className="inline-flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-stone-950 px-2.5 py-1 rounded-lg font-mono font-black text-xs border border-stone-900 shadow-[1px_1px_0px_#000] transition-colors"
-                title="Click to Call"
+                className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 rounded-lg text-xs font-mono font-bold border border-emerald-500/40 transition-colors shadow-xs"
+                title="Tap to Call Customer"
               >
-                <Phone className="w-3.5 h-3.5 text-stone-900" />
+                <PhoneCall className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
                 <span>{order.customer_phone}</span>
+                <span className="text-[10px] font-sans underline ml-0.5 hidden sm:inline">Call</span>
               </a>
             ) : (
-              <span className="text-xs text-stone-400 italic">No phone attached</span>
+              <span className="text-xs text-stone-500 italic">No phone attached</span>
             )}
           </div>
         </div>
 
-        {/* User confirmation status tip */}
-        {!isAdmin && order.status === 'pending' && (
-          <div className="mt-2.5 p-2.5 bg-amber-100/90 rounded-xl border border-amber-300 text-xs text-amber-900 flex items-start gap-2">
-            <PhoneCall className="w-4 h-4 text-amber-700 shrink-0 mt-0.5 animate-bounce" />
-            <p className="leading-snug font-medium">
-              অ্যাডমিন কিছুক্ষণের মধ্যে আপনার নাম্বারে (<strong>{order.customer_phone}</strong>) কল দিয়ে অর্ডারটি কনফার্ম করে গ্রিলে তুলবে!
-            </p>
-          </div>
-        )}
-
-        {!isAdmin && order.status === 'confirmed' && (
-          <div className="mt-2.5 p-2.5 bg-blue-50 rounded-xl border border-blue-300 text-xs text-blue-900 flex items-start gap-2">
-            <ChefHat className="w-4 h-4 text-blue-700 shrink-0 mt-0.5" />
-            <p className="leading-snug font-medium">
-              কল কনফার্মেশন সম্পন্ন! আপনার পছন্দের আইটেমটি এখন গ্রিলে তৈরি হচ্ছে 🔥
-            </p>
-          </div>
-        )}
-
         {/* Items List */}
-        <div className="my-4 space-y-2">
+        <div className="mt-3.5 space-y-2">
           {order.items?.map((item, idx) => (
-            <div key={idx} className="flex justify-between items-center text-sm">
+            <div 
+              key={idx} 
+              className="flex justify-between items-center text-xs py-1.5 px-2.5 bg-white/[0.03] rounded-lg border border-white/[0.04]"
+            >
               <div className="flex items-center gap-2">
-                <span className="w-6 h-6 rounded-md bg-stone-900 text-amber-300 font-black text-xs flex items-center justify-center font-mono">
-                  {item.quantity}x
+                <span className="w-5 h-5 rounded bg-amber-400/20 text-amber-300 font-black flex items-center justify-center text-xs border border-amber-400/30">
+                  {item.quantity}
                 </span>
-                <span className="font-bold text-stone-800 font-display">{item.name}</span>
+                <span className="font-bold text-stone-200 text-xs">{item.name}</span>
               </div>
-              <span className="font-mono font-bold text-stone-600 text-xs">
-                ৳{Number(item.price_at_order) * item.quantity}
+              <span className="font-mono text-stone-300">
+                ৳{(item.price_at_order || 50) * item.quantity}
               </span>
             </div>
           ))}
         </div>
 
-        {/* Kitchen Notes */}
+        {/* Special Instructions / Notes */}
         {order.notes && (
-          <div className="my-2 p-2.5 bg-amber-50 rounded-xl border border-amber-300 text-xs text-amber-900 flex items-start gap-1.5">
-            <MessageSquare className="w-3.5 h-3.5 text-amber-700 shrink-0 mt-0.5" />
-            <p className="font-medium italic">"{order.notes}"</p>
+          <div className="mt-3 bg-stone-900/60 p-2.5 rounded-lg border border-white/5 text-xs text-stone-300 flex items-start gap-1.5">
+            <MessageSquare className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+            <span className="italic leading-tight">{order.notes}</span>
           </div>
         )}
       </div>
 
-      {/* Footer Total & Admin Actions */}
-      <div className="pt-3 border-t border-stone-200 space-y-2.5">
-        <div className="flex justify-between items-center">
-          <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">Total Bill</span>
-          <span className="text-xl font-black text-rose-600 font-display">৳{order.total_price}</span>
+      {/* Bottom Summary & Status Update Actions */}
+      <div className="mt-4 pt-3 border-t border-white/10">
+        <div className="flex justify-between items-center mb-3">
+          <span className="text-xs text-stone-400 uppercase font-bold tracking-wider">Total Bill</span>
+          <span className="text-xl font-black text-amber-300 font-display">৳{order.total_price}</span>
         </div>
 
-        {/* Admin Call & Status Action Stepper */}
+        {/* Status Action Buttons for Kitchen Admin */}
         {isAdmin && onUpdateStatus && (
           <div className="space-y-2 pt-1">
+            
             {order.status === 'pending' && (
-              <>
-                {order.customer_phone && (
-                  <a
-                    href={`tel:${order.customer_phone}`}
-                    className="w-full py-2.5 px-3 bg-amber-400 hover:bg-amber-300 text-stone-950 font-black rounded-xl text-xs border-2 border-stone-900 shadow-[2px_2px_0px_#000] flex items-center justify-center gap-2 cursor-pointer transition-all"
-                  >
-                    <PhoneCall className="w-4 h-4 text-stone-900" />
-                    <span>Call Customer: {order.customer_phone}</span>
-                  </a>
-                )}
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => onUpdateStatus(order.id, 'confirmed')}
-                    className="flex-1 py-2.5 px-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-xs border-2 border-stone-900 shadow-[2px_2px_0px_#000] flex items-center justify-center gap-1.5 cursor-pointer transition-all"
-                  >
-                    <ChefHat className="w-4 h-4" />
-                    <span>Call Done & Confirm</span>
-                  </button>
-                  <button
-                    onClick={() => onUpdateStatus(order.id, 'cancelled')}
-                    className="py-2.5 px-3 bg-stone-100 hover:bg-rose-100 text-stone-700 hover:text-rose-700 font-bold rounded-xl text-xs border border-stone-300 transition-colors"
-                    title="Cancel order"
-                  >
-                    Reject
-                  </button>
-                </div>
-              </>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onUpdateStatus(order.id, 'confirmed')}
+                  className="flex-1 py-2 px-3 hero-candle-cta rounded-xl font-extrabold text-xs uppercase tracking-wide flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
+                >
+                  <ChefHat className="w-3.5 h-3.5" />
+                  <span>Call Done & Confirm</span>
+                </button>
+                <button
+                  onClick={() => onUpdateStatus(order.id, 'cancelled')}
+                  className="py-2 px-3 bg-rose-950/80 hover:bg-rose-900 text-rose-300 rounded-xl border border-rose-800/60 font-bold text-xs cursor-pointer"
+                  title="Cancel Order"
+                >
+                  <XCircle className="w-3.5 h-3.5" />
+                </button>
+              </div>
             )}
 
             {order.status === 'confirmed' && (
               <button
                 onClick={() => onUpdateStatus(order.id, 'completed')}
-                className="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl text-xs border-2 border-stone-900 shadow-[2px_2px_0px_#000] flex items-center justify-center gap-2 cursor-pointer transition-all"
+                className="w-full py-2.5 px-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
               >
-                <CheckCircle className="w-4 h-4" />
-                <span>Mark Food as Ready / Served</span>
+                <CheckCircle className="w-3.5 h-3.5" />
+                <span>Mark Food Ready / Served</span>
               </button>
             )}
 
             {order.status === 'completed' && (
-              <div className="w-full py-2 px-3 bg-emerald-50 border border-emerald-300 rounded-xl text-center text-xs font-bold text-emerald-800 flex items-center justify-center gap-1.5">
-                <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Order Picked Up & Completed</span>
+              <div className="text-center py-1 text-xs text-emerald-400 font-bold flex items-center justify-center gap-1 bg-emerald-950/40 rounded-lg border border-emerald-500/20">
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Order Completed</span>
               </div>
             )}
 
             {order.status === 'cancelled' && (
-              <div className="w-full py-2 px-3 bg-rose-50 border border-rose-300 rounded-xl text-center text-xs font-bold text-rose-800">
-                Order Cancelled
+              <div className="text-center py-1 text-xs text-rose-400 font-bold flex items-center justify-center gap-1 bg-rose-950/40 rounded-lg border border-rose-800/30">
+                <XCircle className="w-3.5 h-3.5 text-rose-400" />
+                <span>Order Cancelled</span>
               </div>
             )}
+
           </div>
         )}
+
       </div>
 
     </div>
