@@ -41,30 +41,30 @@ export function DeveloperCreditWidget() {
   }, [])
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 select-none" ref={widgetRef}>
+    <div className="fixed bottom-5 right-5 z-50 select-none" ref={widgetRef}>
       
-      {/* Pop-up Card (Floating above the circular avatar) */}
+      {/* Pop-up Card (Floating above the circular avatar, matching dark ambient food cart palette) */}
       {isOpen && (
         <div 
-          className="absolute bottom-20 right-0 w-[340px] sm:w-[380px] bg-white/95 text-stone-900 rounded-[28px] p-6 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.5),0_0_1px_1px_rgba(0,0,0,0.06)] border border-stone-200/90 backdrop-blur-xl animate-slideUp origin-bottom-right"
-          style={{ animationDuration: '220ms' }}
+          className="absolute bottom-16 right-0 w-[320px] sm:w-[360px] bg-[#15120F]/95 text-stone-100 rounded-[28px] p-5 sm:p-6 shadow-[0_25px_70px_rgba(0,0,0,0.9),0_0_35px_rgba(245,158,11,0.15)] border border-amber-500/30 backdrop-blur-2xl animate-slideUp origin-bottom-right"
+          style={{ animationDuration: '200ms' }}
         >
           {/* Header */}
-          <div className="flex items-start justify-between gap-3 mb-4">
-            <div className="flex items-center gap-3.5">
+          <div className="flex items-start justify-between gap-3 mb-3.5">
+            <div className="flex items-center gap-3">
               <img
                 src="/developer.jpg"
                 alt="Mushfiqur Rahman"
-                className="w-13 h-13 rounded-2xl object-cover shadow-md border border-stone-200 shrink-0"
+                className="w-12 h-12 rounded-2xl object-cover shadow-md border border-amber-400/50 shrink-0"
               />
               <div>
                 <div className="flex items-center gap-1.5">
-                  <h3 className="text-base sm:text-lg font-black text-stone-900 font-display leading-tight">
+                  <h3 className="text-base sm:text-lg font-black text-amber-50 font-display leading-tight">
                     Mushfiqur Rahman
                   </h3>
-                  <Sparkles className="w-4 h-4 text-amber-500 fill-amber-500" />
+                  <Sparkles className="w-4 h-4 text-amber-400 fill-amber-400" />
                 </div>
-                <p className="text-xs font-bold text-amber-700 tracking-wide mt-0.5">
+                <p className="text-xs font-bold text-amber-400 font-mono tracking-wide mt-0.5">
                   Full-stack Developer
                 </p>
               </div>
@@ -73,7 +73,7 @@ export function DeveloperCreditWidget() {
             {/* Close Button */}
             <button
               onClick={() => setIsOpen(false)}
-              className="text-stone-400 hover:text-stone-700 p-1 rounded-full hover:bg-stone-100 transition-colors cursor-pointer -mr-1 -mt-1"
+              className="text-stone-400 hover:text-white p-1.5 rounded-xl hover:bg-stone-800 transition-colors cursor-pointer -mr-1 -mt-1"
               aria-label="Close"
             >
               <X className="w-4 h-4" />
@@ -81,30 +81,30 @@ export function DeveloperCreditWidget() {
           </div>
 
           {/* Bio Subtitle */}
-          <p className="text-xs text-stone-600 leading-relaxed mb-4">
+          <p className="text-xs text-stone-300 leading-relaxed mb-4">
             Architected & developed with modern web standards by Mushfiq.
           </p>
 
           {/* Divider */}
-          <hr className="border-t border-stone-200/80 mb-4" />
+          <hr className="border-t border-white/10 mb-4" />
 
           {/* Link Buttons */}
-          <div className="space-y-2.5 mb-5">
+          <div className="space-y-2 mb-4">
             
             {/* Portfolio */}
             <a
               href="https://mushfiq.dev"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full py-3 px-4 bg-stone-50 hover:bg-stone-100/90 text-stone-900 rounded-2xl border border-stone-200/90 flex items-center justify-between transition-all group shadow-xs hover:border-amber-400/80"
+              className="w-full py-2.5 px-3.5 bg-[#201C18] hover:bg-[#2A2520] text-stone-200 hover:text-white rounded-2xl border border-white/10 hover:border-amber-400/60 flex items-center justify-between transition-all group shadow-xs"
             >
-              <div className="flex items-center gap-3">
-                <Globe className="w-5 h-5 text-amber-700" />
-                <span className="text-xs sm:text-sm font-bold text-stone-800">
+              <div className="flex items-center gap-2.5">
+                <Globe className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+                <span className="text-xs sm:text-sm font-bold">
                   Portfolio Website
                 </span>
               </div>
-              <ExternalLink className="w-4 h-4 text-stone-400 group-hover:text-stone-700 transition-colors" />
+              <ExternalLink className="w-3.5 h-3.5 text-stone-400 group-hover:text-amber-300 transition-colors" />
             </a>
 
             {/* GitHub Profile */}
@@ -112,15 +112,15 @@ export function DeveloperCreditWidget() {
               href="https://github.com/mushfiq693-dotcom"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full py-3 px-4 bg-stone-50 hover:bg-stone-100/90 text-stone-900 rounded-2xl border border-stone-200/90 flex items-center justify-between transition-all group shadow-xs hover:border-stone-400"
+              className="w-full py-2.5 px-3.5 bg-[#201C18] hover:bg-[#2A2520] text-stone-200 hover:text-white rounded-2xl border border-white/10 hover:border-amber-400/60 flex items-center justify-between transition-all group shadow-xs"
             >
-              <div className="flex items-center gap-3">
-                <GitHubIcon className="text-stone-900" />
-                <span className="text-xs sm:text-sm font-bold text-stone-800">
+              <div className="flex items-center gap-2.5">
+                <GitHubIcon className="text-stone-200 group-hover:scale-110 transition-transform" />
+                <span className="text-xs sm:text-sm font-bold">
                   GitHub Profile
                 </span>
               </div>
-              <ExternalLink className="w-4 h-4 text-stone-400 group-hover:text-stone-700 transition-colors" />
+              <ExternalLink className="w-3.5 h-3.5 text-stone-400 group-hover:text-amber-300 transition-colors" />
             </a>
 
             {/* LinkedIn Profile */}
@@ -128,26 +128,26 @@ export function DeveloperCreditWidget() {
               href="https://linkedin.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full py-3 px-4 bg-stone-50 hover:bg-stone-100/90 text-stone-900 rounded-2xl border border-stone-200/90 flex items-center justify-between transition-all group shadow-xs hover:border-[#0077B5]/60"
+              className="w-full py-2.5 px-3.5 bg-[#201C18] hover:bg-[#2A2520] text-stone-200 hover:text-white rounded-2xl border border-white/10 hover:border-amber-400/60 flex items-center justify-between transition-all group shadow-xs"
             >
-              <div className="flex items-center gap-3">
-                <LinkedInIcon className="text-[#0077B5]" />
-                <span className="text-xs sm:text-sm font-bold text-stone-800">
+              <div className="flex items-center gap-2.5">
+                <LinkedInIcon className="text-[#38bdf8] group-hover:scale-110 transition-transform" />
+                <span className="text-xs sm:text-sm font-bold">
                   LinkedIn Profile
                 </span>
               </div>
-              <ExternalLink className="w-4 h-4 text-stone-400 group-hover:text-stone-700 transition-colors" />
+              <ExternalLink className="w-3.5 h-3.5 text-stone-400 group-hover:text-amber-300 transition-colors" />
             </a>
 
           </div>
 
           {/* Footer Signature */}
-          <div className="flex items-center justify-between text-[11px] text-stone-600 font-mono pt-1">
-            <span className="flex items-center gap-1.5 font-bold text-stone-700">
-              <Code2 className="w-3.5 h-3.5 text-amber-600" />
+          <div className="flex items-center justify-between text-[11px] text-stone-400 font-mono pt-1">
+            <span className="flex items-center gap-1.5 font-bold text-stone-300">
+              <Code2 className="w-3.5 h-3.5 text-amber-400" />
               <span>Developer Signature</span>
             </span>
-            <span className="tracking-wider uppercase text-[10px] text-stone-600 font-semibold">
+            <span className="tracking-wider uppercase text-[10px] text-stone-400 font-semibold">
               GSTU CSE Sync
             </span>
           </div>
@@ -155,11 +155,11 @@ export function DeveloperCreditWidget() {
         </div>
       )}
 
-      {/* Floating Circular Trigger Avatar */}
+      {/* Floating Circular Trigger Avatar (Slightly smaller, sleek and compact) */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="group relative w-15 h-15 rounded-full p-1 bg-stone-950/90 hover:bg-stone-900 transition-all duration-300 shadow-[0_8px_30px_rgba(0,0,0,0.6)] border-2 border-amber-400 ring-3 ring-amber-500/40 hover:ring-amber-400/80 active:scale-95 cursor-pointer flex items-center justify-center"
+        className="group relative w-11 h-11 sm:w-12 sm:h-12 rounded-full p-0.5 bg-stone-950 hover:bg-stone-900 transition-all duration-300 shadow-[0_8px_25px_rgba(0,0,0,0.7)] border-2 border-amber-400 ring-2 ring-amber-500/40 hover:ring-amber-400/80 active:scale-95 cursor-pointer flex items-center justify-center"
         aria-label="Toggle Developer Info"
         title="Developer Info"
       >
@@ -170,8 +170,8 @@ export function DeveloperCreditWidget() {
         />
 
         {/* Top-Right Glowing Status Pip */}
-        <span className="absolute top-0 right-0 w-4 h-4 bg-amber-400 rounded-full border-2 border-stone-950 shadow-xs flex items-center justify-center">
-          <span className="w-1.5 h-1.5 bg-amber-950 rounded-full animate-ping" />
+        <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-amber-400 rounded-full border-2 border-stone-950 shadow-xs flex items-center justify-center">
+          <span className="w-1 h-1 bg-amber-950 rounded-full animate-ping" />
         </span>
       </button>
 
