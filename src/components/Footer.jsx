@@ -22,7 +22,7 @@ export function Footer() {
   const [devModalOpen, setDevModalOpen] = useState(false)
 
   return (
-    <footer className="bg-[#110F0D] text-stone-300 border-t border-amber-500/20 pt-12 pb-8 mt-16 select-none">
+    <footer className="bg-[#100E0C] text-stone-300 border-t border-amber-500/20 pt-12 pb-8 select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         
         {/* Top Grid: Brand & Cart Spot / Owner Hotlines (Clean 2-Column Layout) */}

@@ -94,7 +94,7 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[#FFFBF2] text-stone-900 selection:bg-amber-400 selection:text-stone-900">
+    <div className="min-h-screen flex flex-col justify-between bg-[#0E0C0A] text-stone-100 selection:bg-amber-400 selection:text-stone-950">
       
       {/* Navigation */}
       <Navbar activePage={activePage} setActivePage={handleNavigate} />

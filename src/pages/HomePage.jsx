@@ -42,7 +42,7 @@ export function HomePage({ onNavigateToOrders, onNavigateToLogin }) {
   }, [])
 
   return (
-    <div className="bg-[#0E0C0A] min-h-screen pb-24 text-stone-100">
+    <div className="bg-[#0E0C0A] min-h-screen pb-14 text-stone-100">
       
       {/* Full-Bleed Atmospheric Hero Section */}
       <section className="relative w-full h-[90vh] sm:h-[95vh] min-h-[600px] max-h-[1100px] overflow-hidden flex flex-col justify-end text-white border-b border-amber-500/20 select-none">
