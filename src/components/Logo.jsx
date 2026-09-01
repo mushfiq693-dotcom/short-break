@@ -1,7 +1,7 @@
 import React from 'react'
 import { Flame } from 'lucide-react'
 
-export function Logo({ size = 'md', showSubtitle = true, onClick }) {
+export function Logo({ size = 'md', onClick }) {
   const isLarge = size === 'lg'
   const isSmall = size === 'sm'
 
@@ -34,29 +34,20 @@ export function Logo({ size = 'md', showSubtitle = true, onClick }) {
       </div>
 
       {/* Brand Typography */}
-      <div className="flex flex-col text-left">
-        <div className="flex items-center gap-1.5 flex-wrap leading-tight">
-          <span className={`font-black tracking-tight text-white transition-colors font-display ${
-            isLarge 
-              ? 'text-xl sm:text-2xl' 
-              : isSmall 
-                ? 'text-sm' 
-                : 'text-base sm:text-lg'
-          } ${onClick ? 'group-hover:text-amber-400' : ''}`}>
-            SHORT BREAK
-          </span>
-          
-          <span className="px-1.5 py-0.5 bg-gradient-to-r from-amber-400 to-amber-500 text-stone-950 font-black text-[9px] sm:text-[10px] rounded shadow-xs uppercase tracking-wide">
-            শর্ট ব্রেক
-          </span>
-        </div>
-
-        {showSubtitle && (
-          <p className="text-[10px] text-stone-400 font-medium tracking-wide flex items-center gap-1 mt-0.5 hidden sm:flex">
-            <span className="w-1 h-1 rounded-full bg-amber-400 inline-block" />
-            <span>Street Food Cart • Helipad, Kalapara</span>
-          </p>
-        )}
+      <div className="flex items-center gap-1.5 flex-wrap leading-tight">
+        <span className={`font-black tracking-tight text-white transition-colors font-display ${
+          isLarge 
+            ? 'text-xl sm:text-2xl' 
+            : isSmall 
+              ? 'text-sm' 
+              : 'text-base sm:text-lg'
+        } ${onClick ? 'group-hover:text-amber-400' : ''}`}>
+          SHORT BREAK
+        </span>
+        
+        <span className="px-1.5 py-0.5 bg-gradient-to-r from-amber-400 to-amber-500 text-stone-950 font-black text-[9px] sm:text-[10px] rounded shadow-xs uppercase tracking-wide">
+          শর্ট ব্রেক
+        </span>
       </div>
     </div>
   )

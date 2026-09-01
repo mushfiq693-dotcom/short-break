@@ -48,7 +48,6 @@ export function Navbar({ activePage, setActivePage }) {
           <div className="flex items-center justify-between h-14 sm:h-16">
             <Logo 
               size="md" 
-              showSubtitle={true}
               onClick={() => handleNav('home')} 
             />
 
@@ -76,7 +75,6 @@ export function Navbar({ activePage, setActivePage }) {
           {/* Brand Logo */}
           <Logo 
             size="md" 
-            showSubtitle={true}
             onClick={() => handleNav('home')} 
           />
 
