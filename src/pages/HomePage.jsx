@@ -197,56 +197,6 @@ export function HomePage({ onNavigateToOrders, onNavigateToLogin }) {
           </div>
         )}
 
-        {/* Roadside Spot & Ordering Banner */}
-        <div className="mt-20 glass-panel-dark rounded-3xl p-8 sm:p-10 border border-amber-500/25 shadow-2xl relative overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-            
-            <div className="space-y-3 md:col-span-2">
-              <span className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
-                <MapPin className="w-4 h-4 text-rose-500" /> Helipad, Kalapara, Patuakhali
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-black text-white font-display">
-                Ready in Minutes • Collect from Cart or Home Delivery
-              </h3>
-              <p className="text-sm text-stone-300 leading-relaxed max-w-xl">
-                Place your order with your phone number. Admin calls to confirm, grills your food fresh, and lets you know when it's ready!
-              </p>
-
-              {/* Direct Hotline Calls */}
-              <div className="pt-2 flex flex-wrap items-center gap-3 text-xs font-mono">
-                <span className="text-stone-400 font-bold uppercase tracking-wider text-[11px] font-sans">
-                  Direct Hotline:
-                </span>
-                <a
-                  href="tel:01641508111"
-                  className="inline-flex items-center gap-1.5 bg-[#1F1C18] hover:bg-[#2A2621] text-amber-300 px-3.5 py-1.5 rounded-xl border border-amber-400/30 transition-all font-bold shadow-xs hover:border-amber-400/60"
-                >
-                  <PhoneCall className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Mahim: 01641508111</span>
-                </a>
-                <a
-                  href="tel:01641508100"
-                  className="inline-flex items-center gap-1.5 bg-[#1F1C18] hover:bg-[#2A2621] text-amber-300 px-3.5 py-1.5 rounded-xl border border-amber-400/30 transition-all font-bold shadow-xs hover:border-amber-400/60"
-                >
-                  <PhoneCall className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Raj: 01641508100</span>
-                </a>
-              </div>
-            </div>
-
-            <div className="text-center md:text-right">
-              <button
-                onClick={() => setIsCartOpen(true)}
-                className="w-full sm:w-auto hero-candle-cta px-6 py-3.5 rounded-xl text-sm font-black uppercase tracking-wider inline-flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <ShoppingBag className="w-4 h-4 stroke-[2.5]" />
-                <span>Open Cart ({totalCount})</span>
-              </button>
-            </div>
-
-          </div>
-        </div>
-
       </section>
 
       {/* Floating Bottom Sticky Bar on Mobile when items in cart */}

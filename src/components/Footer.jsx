@@ -1,10 +1,10 @@
-import React from 'react'
-import { MapPin, Phone, Clock, Heart, Flame, PhoneCall, Globe, Code2, ExternalLink } from 'lucide-react'
+import React, { useState } from 'react'
+import { MapPin, Phone, Clock, Heart, Flame, PhoneCall, Globe, Code2, ExternalLink, X } from 'lucide-react'
 
 // Custom Clean Brand SVG Icons
 function LinkedInIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" {...props}>
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" {...props}>
       <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
     </svg>
   )
@@ -12,19 +12,21 @@ function LinkedInIcon(props) {
 
 function FacebookIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" {...props}>
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" {...props}>
       <path d="M12 2.04c-5.5 0-10 4.49-10 10.02 0 5 3.66 9.15 8.44 9.9v-7H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.23.19 2.23.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.45 2.9h-2.33v7a10 10 0 0 0 8.44-9.9c0-5.53-4.5-10.02-10-10.02z"/>
     </svg>
   )
 }
 
 export function Footer() {
+  const [devModalOpen, setDevModalOpen] = useState(false)
+
   return (
-    <footer className="bg-[#110F0D] text-stone-300 border-t border-amber-500/20 pt-14 pb-8 mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+    <footer className="bg-[#110F0D] text-stone-300 border-t border-amber-500/20 pt-12 pb-8 mt-16 select-none">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         
-        {/* Top Grid: Brand, Spot/Hotlines, Menu */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Top Grid: Brand & Cart Spot / Owner Hotlines (Clean 2-Column Layout) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           
           {/* Brand Info */}
           <div>
@@ -34,7 +36,7 @@ export function Footer() {
               </div>
               <span className="text-lg font-black text-white font-display tracking-tight">SHORT BREAK</span>
             </div>
-            <p className="text-xs sm:text-sm text-stone-400 leading-relaxed mb-4">
+            <p className="text-xs sm:text-sm text-stone-400 leading-relaxed mb-4 max-w-md">
               Your favorite food cart in Kalapara! Sizzling Meat Boxes, grilled artisan sandwiches, and crispy peri-peri fries crafted fresh on order.
             </p>
             <div className="flex items-center gap-2 text-xs font-bold text-amber-300 bg-[#1A1815] px-3 py-1.5 rounded-xl w-fit border border-amber-500/20">
@@ -45,7 +47,7 @@ export function Footer() {
 
           {/* Cart Location & Owner Hotlines */}
           <div>
-            <h3 className="text-white font-bold text-xs uppercase tracking-wider mb-4 flex items-center gap-2 font-display">
+            <h3 className="text-white font-bold text-xs uppercase tracking-wider mb-3 flex items-center gap-2 font-display">
               <MapPin className="w-3.5 h-3.5 text-amber-400" /> Cart Spot & Hotlines
             </h3>
             <div className="space-y-2.5 text-xs sm:text-sm text-stone-400">
@@ -62,17 +64,17 @@ export function Footer() {
                 <span className="text-[11px] text-amber-400 font-bold uppercase tracking-wider block">
                   Cart Owners (Direct Call / Home Delivery):
                 </span>
-                <div className="flex flex-col gap-1.5 text-xs font-mono">
+                <div className="flex flex-wrap items-center gap-3 text-xs font-mono">
                   <a 
                     href="tel:01641508111" 
-                    className="flex items-center gap-2 text-stone-300 hover:text-amber-400 transition-colors"
+                    className="inline-flex items-center gap-1.5 bg-[#1C1814] hover:bg-[#25201A] text-stone-300 hover:text-amber-400 px-3 py-1.5 rounded-xl border border-stone-800 transition-colors"
                   >
                     <PhoneCall className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Mahim: <strong className="text-white">01641508111</strong></span>
                   </a>
                   <a 
                     href="tel:01641508100" 
-                    className="flex items-center gap-2 text-stone-300 hover:text-amber-400 transition-colors"
+                    className="inline-flex items-center gap-1.5 bg-[#1C1814] hover:bg-[#25201A] text-stone-300 hover:text-amber-400 px-3 py-1.5 rounded-xl border border-stone-800 transition-colors"
                   >
                     <PhoneCall className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Raj: <strong className="text-white">01641508100</strong></span>
@@ -82,112 +84,129 @@ export function Footer() {
             </div>
           </div>
 
-          {/* 3 Items Showcase Quick Links */}
-          <div>
-            <h3 className="text-white font-bold text-xs uppercase tracking-wider mb-4 font-display">
-              Signature Menu
-            </h3>
-            <ul className="space-y-2 text-xs sm:text-sm text-stone-400">
-              <li className="flex justify-between items-center py-1 border-b border-stone-850">
-                <span className="text-stone-200 font-medium">1. Meat Box (Chicken & Sausage)</span>
-                <span className="font-bold text-amber-400">৳100</span>
-              </li>
-              <li className="flex justify-between items-center py-1 border-b border-stone-850">
-                <span className="text-stone-200 font-medium">2. Grilled Chicken Sandwich</span>
-                <span className="font-bold text-amber-400">৳60</span>
-              </li>
-              <li className="flex justify-between items-center py-1">
-                <span className="text-stone-200 font-medium">3. Peri Peri French Fries</span>
-                <span className="font-bold text-amber-400">৳50</span>
-              </li>
-            </ul>
-          </div>
-
         </div>
 
-        {/* Developer Credit Section */}
-        <div className="bg-[#181614] rounded-2xl p-5 sm:p-6 border border-stone-800 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-5">
-          
-          {/* Developer Bio with Photo */}
-          <div className="flex items-center gap-4 text-center sm:text-left">
-            <div className="relative shrink-0">
-              <img
-                src="/developer.jpg"
-                alt="Developer - Mushfiq"
-                className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border border-rose-500/70 shadow-md ring-2 ring-amber-400/25"
-              />
-              <div className="absolute -bottom-1 -right-1 bg-gradient-to-br from-rose-600 to-rose-700 text-white p-1 rounded-lg text-[9px] font-black border border-stone-900 shadow-xs">
-                <Code2 className="w-2.5 h-2.5" />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-center sm:justify-start gap-2 mb-0.5">
-                <span className="px-2 py-0.5 bg-rose-950/80 text-rose-300 border border-rose-800/50 rounded text-[9px] font-bold uppercase tracking-wider">
-                  Developer Credit
-                </span>
-                <span className="text-stone-400 text-xs font-mono">• Full-Stack Engineer</span>
-              </div>
-              <h4 className="text-base sm:text-lg font-black text-white font-display">
-                Designed & Built by <span className="text-amber-400">Mushfiq</span>
-              </h4>
-              <p className="text-[11px] text-stone-400">
-                Crafted with React, Tailwind CSS & Supabase for Short Break Food Cart.
-              </p>
-            </div>
-          </div>
-
-          {/* Social / Portfolio Links */}
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            {/* Portfolio */}
-            <a
-              href="https://mushfiq.dev"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#201D1A] hover:bg-[#2A2622] text-amber-300 rounded-xl border border-amber-500/25 text-xs font-bold transition-all shadow-xs"
-              title="View Portfolio"
-            >
-              <Globe className="w-3 h-3 text-amber-400" />
-              <span>Portfolio</span>
-              <ExternalLink className="w-2.5 h-2.5 opacity-60" />
-            </a>
-
-            {/* LinkedIn */}
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#0077B5]/15 hover:bg-[#0077B5]/30 text-[#38bdf8] rounded-xl border border-[#0077B5]/40 text-xs font-bold transition-all shadow-xs"
-              title="Connect on LinkedIn"
-            >
-              <LinkedInIcon className="text-[#38bdf8]" />
-              <span>LinkedIn</span>
-            </a>
-
-            {/* Facebook */}
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1877F2]/15 hover:bg-[#1877F2]/30 text-[#60a5fa] rounded-xl border border-[#1877F2]/40 text-xs font-bold transition-all shadow-xs"
-              title="Connect on Facebook"
-            >
-              <FacebookIcon className="text-[#60a5fa]" />
-              <span>Facebook</span>
-            </a>
-          </div>
-
-        </div>
-
-        {/* Bottom Copyright */}
-        <div className="pt-6 border-t border-stone-850 text-center text-xs text-stone-500 flex flex-col sm:flex-row items-center justify-between gap-3">
+        {/* Bottom Bar with Circular Developer Credit Trigger */}
+        <div className="pt-6 border-t border-stone-850 text-xs text-stone-500 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© {new Date().getFullYear()} Short Break Food Cart • Helipad, Kalapara, Patuakhali.</p>
-          <p className="flex items-center gap-1">
-            Crafted with <Heart className="w-3 h-3 text-rose-500 fill-rose-500 inline" /> for street food lovers.
-          </p>
+          
+          {/* Circular Developer Credit Trigger Button */}
+          <div className="flex items-center gap-2">
+            <span className="text-stone-400 text-xs">Developed with passion by</span>
+            <button
+              onClick={() => setDevModalOpen(true)}
+              className="group relative inline-flex items-center gap-2 bg-[#1A1815] hover:bg-[#25211D] text-stone-200 py-1 px-2.5 rounded-full border border-amber-500/30 hover:border-amber-400 shadow-md transition-all cursor-pointer active:scale-95"
+              title="Click to view developer profile"
+            >
+              <div className="relative">
+                <img
+                  src="/developer.jpg"
+                  alt="Mushfiq"
+                  className="w-6 h-6 rounded-full object-cover border border-amber-400 ring-1 ring-rose-500 group-hover:scale-110 transition-transform"
+                />
+                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 ring-1 ring-stone-900 animate-pulse" />
+              </div>
+              <span className="text-xs font-bold text-amber-300 group-hover:text-amber-200">
+                Mushfiq
+              </span>
+              <Code2 className="w-3 h-3 text-stone-400 group-hover:text-amber-400" />
+            </button>
+          </div>
         </div>
 
       </div>
+
+      {/* Interactive Developer Credit Modal / Circle Pop-up */}
+      {devModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div 
+            onClick={() => setDevModalOpen(false)}
+            className="absolute inset-0 bg-stone-950/80 backdrop-blur-sm animate-fadeIn cursor-pointer"
+          />
+
+          {/* Modal Pop-up Card */}
+          <div className="relative z-10 w-full max-w-sm glass-panel-dark rounded-3xl p-6 border border-amber-500/30 shadow-[0_20px_50px_rgba(0,0,0,0.8)] text-center animate-slideUp">
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setDevModalOpen(false)}
+              className="absolute top-4 right-4 text-stone-400 hover:text-white p-1.5 rounded-xl hover:bg-stone-800 transition-colors cursor-pointer"
+              aria-label="Close"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            {/* Glowing Circular Avatar */}
+            <div className="relative w-24 h-24 mx-auto mb-4">
+              <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 via-rose-500 to-amber-500 rounded-full blur-sm animate-spin-slow opacity-80" />
+              <img
+                src="/developer.jpg"
+                alt="Mushfiq - Full-Stack Engineer"
+                className="relative w-24 h-24 rounded-full object-cover border-2 border-amber-400 shadow-xl"
+              />
+              <div className="absolute bottom-0 right-0 bg-rose-600 text-white p-1 rounded-full border-2 border-stone-900 shadow-md">
+                <Code2 className="w-3.5 h-3.5" />
+              </div>
+            </div>
+
+            {/* Dev Details */}
+            <div className="space-y-1 mb-4">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-rose-950/80 text-rose-300 border border-rose-800/50 rounded-full text-[10px] font-bold uppercase tracking-wider mb-1">
+                Developer Profile
+              </div>
+              <h3 className="text-xl font-black text-amber-50 font-display">
+                Mushfiq
+              </h3>
+              <p className="text-xs text-amber-400 font-mono font-bold">
+                Full-Stack Software Engineer
+              </p>
+              <p className="text-xs text-stone-400 max-w-xs mx-auto pt-1 leading-relaxed">
+                Specialized in high-performance web apps with React, Tailwind CSS, Vite & Supabase.
+              </p>
+            </div>
+
+            {/* Social / Portfolio Links */}
+            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10">
+              
+              {/* Portfolio */}
+              <a
+                href="https://mushfiq.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center justify-center p-2.5 bg-[#221D18] hover:bg-[#2D2720] text-amber-300 rounded-2xl border border-amber-500/25 transition-all shadow-xs group"
+              >
+                <Globe className="w-4 h-4 mb-1 text-amber-400 group-hover:scale-110 transition-transform" />
+                <span className="text-[11px] font-bold">Portfolio</span>
+              </a>
+
+              {/* LinkedIn */}
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center justify-center p-2.5 bg-[#0077B5]/15 hover:bg-[#0077B5]/30 text-[#38bdf8] rounded-2xl border border-[#0077B5]/30 transition-all shadow-xs group"
+              >
+                <LinkedInIcon className="mb-1 text-[#38bdf8] group-hover:scale-110 transition-transform" />
+                <span className="text-[11px] font-bold">LinkedIn</span>
+              </a>
+
+              {/* Facebook */}
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center justify-center p-2.5 bg-[#1877F2]/15 hover:bg-[#1877F2]/30 text-[#60a5fa] rounded-2xl border border-[#1877F2]/30 transition-all shadow-xs group"
+              >
+                <FacebookIcon className="mb-1 text-[#60a5fa] group-hover:scale-110 transition-transform" />
+                <span className="text-[11px] font-bold">Facebook</span>
+              </a>
+
+            </div>
+
+          </div>
+        </div>
+      )}
     </footer>
   )
 }
