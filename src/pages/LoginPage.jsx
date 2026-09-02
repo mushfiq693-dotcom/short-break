@@ -6,9 +6,7 @@ import {
   Mail, 
   User, 
   ArrowRight, 
-  ShieldCheck, 
   AlertCircle, 
-  Sparkles,
   Phone,
   Flame,
   CheckCircle2,
@@ -39,13 +37,13 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
         if (!name.trim()) throw new Error('Please enter your full name')
         if (!phone.trim()) throw new Error('Phone number is required for order confirmation')
         
-        await signUp({ email, password, name, phone })
+        await signUp(email, password, { name, phone })
         setSuccessMsg('Account created successfully! Welcome to Short Break.')
         setTimeout(() => {
           onLoginSuccess?.()
         }, 1200)
       } else {
-        await signIn({ email, password })
+        await signIn(email, password)
         onLoginSuccess?.()
       }
     } catch (err) {
@@ -53,22 +51,6 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
     } finally {
       setLoading(false)
     }
-  }
-
-  // Quick fill demo credentials
-  const fillDemoAccount = (role) => {
-    if (role === 'admin') {
-      setEmail('mahim@shortbreak.com')
-      setPassword('password123')
-      setName('Mahim (Cart Owner)')
-      setPhone('01641508111')
-    } else {
-      setEmail('tanvir@gmail.com')
-      setPassword('password123')
-      setName('Tanvir Hasan')
-      setPhone('01812-345678')
-    }
-    setErrorMsg('')
   }
 
   return (
@@ -242,29 +224,6 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
                 </button>
               </p>
             )}
-          </div>
-
-          {/* 1-Click Demo Accounts */}
-          <div className="mt-5 pt-4 border-t border-white/10">
-            <span className="text-[10px] text-stone-400 uppercase tracking-wider block text-center mb-2 font-mono">
-              ⚡ Quick Fill Demo Accounts
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => fillDemoAccount('user')}
-                className="py-1.5 px-2.5 bg-[#201D1A] hover:bg-[#2A2622] text-amber-300 rounded-lg border border-amber-500/20 text-xs font-bold transition-all text-center cursor-pointer"
-              >
-                Foodie Customer
-              </button>
-              <button
-                type="button"
-                onClick={() => fillDemoAccount('admin')}
-                className="py-1.5 px-2.5 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 rounded-lg border border-rose-800/40 text-xs font-bold transition-all text-center cursor-pointer"
-              >
-                Cart Owner (Admin)
-              </button>
-            </div>
           </div>
 
         </div>

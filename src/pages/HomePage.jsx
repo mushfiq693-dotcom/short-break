@@ -199,8 +199,8 @@ export function HomePage({ onNavigateToOrders, onNavigateToLogin }) {
 
       </section>
 
-      {/* Floating Bottom Sticky Bar on Mobile when items in cart */}
-      {totalCount > 0 && (
+      {/* Floating Bottom Sticky Bar on Mobile when items in cart and user is logged in */}
+      {user && totalCount > 0 && (
         <div className="fixed bottom-4 left-4 right-4 z-40 md:hidden animate-slideUp">
           <button
             onClick={() => setIsCartOpen(true)}

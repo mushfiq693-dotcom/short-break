@@ -1,21 +1,18 @@
 import React, { useState } from 'react'
-import { Plus, Minus, ShoppingBag, Check, ArrowRight } from 'lucide-react'
+import { Plus, Minus, ShoppingBag, Check, ArrowRight, LogIn } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 
 export function MenuItemCard({ item, rankNumber, onRequireLogin }) {
   const { user } = useAuth()
-  const { addToCart, cartItems, updateQuantity, setIsCartOpen } = useCart()
+  const { addToCart, cartItems, updateQuantity } = useCart()
   const [addedAnimation, setAddedAnimation] = useState(false)
 
-  const inCart = cartItems.find(i => i.id === item.id)
+  const inCart = user ? cartItems.find(i => i.id === item.id) : null
 
-  const handleAdd = () => {
-    addToCart(item)
-    
-    // If not logged in, guide directly to login / registration page
+  const handleAction = () => {
+    // 1. If not logged in, STRICTLY redirect to login / registration page without adding to cart
     if (!user) {
-      setIsCartOpen(false)
       if (onRequireLogin) {
         onRequireLogin(item)
       } else {
@@ -24,6 +21,8 @@ export function MenuItemCard({ item, rankNumber, onRequireLogin }) {
       return
     }
 
+    // 2. Only authenticated users can add to cart
+    addToCart(item)
     setAddedAnimation(true)
     setTimeout(() => setAddedAnimation(false), 1200)
   }
@@ -72,7 +71,7 @@ export function MenuItemCard({ item, rankNumber, onRequireLogin }) {
 
         {/* Action Controls */}
         <div className="pt-3 border-t border-white/10">
-          {inCart && user ? (
+          {inCart ? (
             <div className="flex items-center justify-between bg-[#221E1A] border border-amber-400/40 rounded-xl p-1.5 shadow-xs">
               <span className="text-xs font-bold text-amber-300 px-2">In Cart:</span>
               <div className="flex items-center gap-2">
@@ -97,7 +96,7 @@ export function MenuItemCard({ item, rankNumber, onRequireLogin }) {
             </div>
           ) : (
             <button
-              onClick={handleAdd}
+              onClick={handleAction}
               className={`w-full py-3 px-4 rounded-xl flex items-center justify-center gap-2 font-black text-sm uppercase tracking-wide cursor-pointer transition-all ${
                 addedAnimation 
                   ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-md' 
@@ -118,7 +117,7 @@ export function MenuItemCard({ item, rankNumber, onRequireLogin }) {
                 </>
               ) : (
                 <>
-                  <ShoppingBag className="w-4 h-4 stroke-[2.5]" />
+                  <LogIn className="w-4 h-4 stroke-[2.5]" />
                   <span>Order Now • ৳{item.price}</span>
                   <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
                 </>

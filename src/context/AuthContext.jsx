@@ -3,23 +3,6 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase'
 
 const AuthContext = createContext(null)
 
-const DEMO_USERS = {
-  admin: {
-    id: 'demo-admin-mahim',
-    email: 'mahim@shortbreak.com',
-    name: 'Mahim (Cart Owner)',
-    phone: '01641508111',
-    role: 'admin'
-  },
-  user: {
-    id: 'demo-user-id',
-    email: 'tanvir@gmail.com',
-    name: 'Tanvir Hasan',
-    phone: '01812-345678',
-    role: 'user'
-  }
-}
-
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [session, setSession] = useState(null)
@@ -105,17 +88,17 @@ export function AuthProvider({ children }) {
           setLoading(false)
         }
       } else {
-        // Fallback demo auth in localStorage
+        // Fallback local auth in localStorage (No auto-login; user is guest null by default)
         const storedUser = localStorage.getItem('sb_current_user')
         if (storedUser) {
           try {
             setUser(JSON.parse(storedUser))
           } catch {
-            setUser(DEMO_USERS.user)
+            setUser(null)
           }
         } else {
-          // Default to regular user in demo mode
-          setUser(DEMO_USERS.user)
+          // Strictly null by default for unauthenticated guests
+          setUser(null)
         }
         setLoading(false)
       }
@@ -144,13 +127,13 @@ export function AuthProvider({ children }) {
       return fullUser
     }
 
-    // Demo Mode Sign In
+    // Local Storage Sign In
     const users = JSON.parse(localStorage.getItem('sb_users') || '[]')
     const matched = users.find(u => u.email.toLowerCase() === email.toLowerCase())
     
     if (matched) {
       if (matched.password && matched.password !== password) {
-        throw new Error('Incorrect password. (Try "password123" for demo accounts)')
+        throw new Error('Incorrect password. Please verify your credentials.')
       }
       setUser(matched)
       localStorage.setItem('sb_current_user', JSON.stringify(matched))
@@ -158,24 +141,20 @@ export function AuthProvider({ children }) {
     }
 
     // If matches admin email
-    if (email.toLowerCase().includes('admin')) {
-      const adminUser = DEMO_USERS.admin
+    if (email.toLowerCase() === 'mahim@shortbreak.com' || email.toLowerCase() === 'admin@shortbreak.com') {
+      const adminUser = {
+        id: 'admin-mahim',
+        email: email,
+        name: 'Mahim (Cart Owner)',
+        phone: '01641508111',
+        role: 'admin'
+      }
       setUser(adminUser)
       localStorage.setItem('sb_current_user', JSON.stringify(adminUser))
       return adminUser
     }
 
-    // Auto-create demo user
-    const newUser = {
-      id: `user-${Date.now()}`,
-      email,
-      name: email.split('@')[0],
-      phone: '+880 1700-000000',
-      role: 'user'
-    }
-    setUser(newUser)
-    localStorage.setItem('sb_current_user', JSON.stringify(newUser))
-    return newUser
+    throw new Error('No account found with this email. Please create an account first.')
   }
 
   const signUp = async (email, password, metadata = {}) => {
@@ -195,10 +174,10 @@ export function AuthProvider({ children }) {
       return data
     }
 
-    // Demo Mode Sign Up
+    // Local Storage Sign Up
     const users = JSON.parse(localStorage.getItem('sb_users') || '[]')
     if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
-      throw new Error('An account with this email already exists.')
+      throw new Error('An account with this email already exists. Please sign in.')
     }
 
     const newUser = {
@@ -226,13 +205,6 @@ export function AuthProvider({ children }) {
     setSession(null)
   }
 
-  // Switch demo account on the fly for testing
-  const switchDemoRole = (targetRole) => {
-    const targetUser = targetRole === 'admin' ? DEMO_USERS.admin : DEMO_USERS.user
-    setUser(targetUser)
-    localStorage.setItem('sb_current_user', JSON.stringify(targetUser))
-  }
-
   const isAdmin = user?.role === 'admin'
 
   return (
@@ -246,7 +218,6 @@ export function AuthProvider({ children }) {
         signIn,
         signUp,
         signOut,
-        switchDemoRole,
         isSupabaseConfigured
       }}
     >

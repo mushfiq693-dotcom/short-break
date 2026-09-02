@@ -36,6 +36,12 @@ export function CartDrawer({ onNavigateToOrders, onNavigateToLogin }) {
 
   if (!isCartOpen) return null
 
+  if (!user) {
+    setIsCartOpen(false)
+    onNavigateToLogin?.()
+    return null
+  }
+
   const handleCheckout = async () => {
     setErrorMsg('')
     if (cartItems.length === 0) return
