@@ -113,11 +113,14 @@ export function CartDrawer({ onNavigateToOrders, onNavigateToLogin, onNavigateTo
         className="absolute inset-0 bg-stone-950/80 backdrop-blur-xs transition-opacity animate-fadeIn" 
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-[#13110F] border-l border-amber-500/25 shadow-2xl flex flex-col justify-between text-stone-100">
+      <div className="fixed inset-x-0 bottom-0 max-h-[94vh] md:max-h-full md:inset-y-0 md:left-auto md:right-0 md:max-w-md w-full flex pl-0 md:pl-10 z-50">
+        <div className="w-full bg-[#13110F] rounded-t-3xl md:rounded-none border-t md:border-t-0 md:border-l border-amber-500/25 shadow-2xl flex flex-col justify-between text-stone-100 overflow-hidden animate-slideUp md:animate-none">
           
+          {/* Mobile Drag Indicator */}
+          <div className="w-12 h-1 bg-stone-700/80 rounded-full mx-auto mt-2.5 mb-1 md:hidden shrink-0" />
+
           {/* Header */}
-          <div className="p-4 sm:p-5 bg-[#1A1714] text-white flex items-center justify-between border-b border-white/10">
+          <div className="p-4 sm:p-5 bg-[#1A1714] text-white flex items-center justify-between border-b border-white/10 shrink-0">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 text-stone-950 flex items-center justify-center font-black shadow-xs">
                 <ShoppingBag className="w-4 h-4 stroke-[2.5]" />
@@ -129,7 +132,8 @@ export function CartDrawer({ onNavigateToOrders, onNavigateToLogin, onNavigateTo
             </div>
             <button
               onClick={handleClose}
-              className="p-1.5 text-stone-400 hover:text-white rounded-lg hover:bg-stone-800 transition-colors cursor-pointer"
+              className="p-2 text-stone-400 hover:text-white rounded-xl hover:bg-stone-800 transition-colors cursor-pointer"
+              aria-label="Close cart"
             >
               <X className="w-5 h-5" />
             </button>
@@ -233,22 +237,24 @@ export function CartDrawer({ onNavigateToOrders, onNavigateToLogin, onNavigateTo
                             </p>
                           </div>
 
-                          {/* Quantity Controls */}
-                          <div className="flex items-center gap-1.5 bg-[#141210] p-1 rounded-lg border border-stone-800">
+                          {/* Quantity Controls with large touch targets */}
+                          <div className="flex items-center gap-1.5 bg-[#141210] p-1 rounded-xl border border-stone-800">
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              className="w-6 h-6 rounded bg-[#221E1A] hover:bg-stone-800 text-stone-300 flex items-center justify-center text-xs font-bold cursor-pointer transition-all"
+                              className="w-8 h-8 rounded-lg bg-[#221E1A] hover:bg-stone-800 text-stone-300 flex items-center justify-center text-xs font-bold cursor-pointer transition-all active:scale-95"
+                              aria-label="Decrease quantity"
                             >
-                              <Minus className="w-3 h-3" />
+                              <Minus className="w-3.5 h-3.5" />
                             </button>
-                            <span className="w-5 text-center font-black text-xs text-white">
+                            <span className="w-6 text-center font-black text-xs text-white">
                               {item.quantity}
                             </span>
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              className="w-6 h-6 rounded bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-stone-950 flex items-center justify-center text-xs font-bold cursor-pointer transition-all"
+                              className="w-8 h-8 rounded-lg bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-stone-950 flex items-center justify-center text-xs font-bold cursor-pointer transition-all active:scale-95"
+                              aria-label="Increase quantity"
                             >
-                              <Plus className="w-3 h-3" />
+                              <Plus className="w-3.5 h-3.5" />
                             </button>
                           </div>
 
@@ -260,8 +266,9 @@ export function CartDrawer({ onNavigateToOrders, onNavigateToLogin, onNavigateTo
 
                           <button
                             onClick={() => removeFromCart(item.id)}
-                            className="text-stone-500 hover:text-rose-400 p-1 cursor-pointer transition-colors"
+                            className="text-stone-500 hover:text-rose-400 p-2 cursor-pointer transition-colors"
                             title="Remove item"
+                            aria-label="Remove item"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -294,14 +301,15 @@ export function CartDrawer({ onNavigateToOrders, onNavigateToLogin, onNavigateTo
                           required
                           maxLength={11}
                           minLength={11}
-                          pattern="01[0-9]{9}"
+                          inputMode="tel"
+                          autoComplete="tel"
                           placeholder="e.g. 01712345678 (11 digits)"
                           value={phone}
                           onChange={(e) => {
                             const val = e.target.value.replace(/\D/g, '').slice(0, 11)
                             setPhone(val)
                           }}
-                          className={`w-full px-3 py-2 text-xs bg-[#1C1815] rounded-lg border focus:outline-hidden font-mono font-bold transition-all ${
+                          className={`w-full px-3.5 py-3 text-base sm:text-xs bg-[#1C1815] rounded-xl border focus:outline-hidden font-mono font-bold transition-all ${
                             phone.length === 11
                               ? 'text-emerald-300 border-emerald-500/60 focus:ring-1 focus:ring-emerald-400'
                               : 'text-amber-300 border-amber-400/40 focus:ring-1 focus:ring-amber-400'
@@ -323,7 +331,7 @@ export function CartDrawer({ onNavigateToOrders, onNavigateToLogin, onNavigateTo
                           placeholder="e.g. Extra mayo, make it extra crispy, less spicy..."
                           value={notes}
                           onChange={(e) => setNotes(e.target.value)}
-                          className="w-full px-3 py-2 text-xs bg-[#1C1815] text-white rounded-lg border border-stone-700 focus:outline-hidden focus:ring-1 focus:ring-amber-400 font-medium resize-none placeholder:text-stone-600"
+                          className="w-full px-3.5 py-2.5 text-base sm:text-xs bg-[#1C1815] text-white rounded-xl border border-stone-800 focus:outline-hidden focus:ring-1 focus:ring-amber-400 font-medium resize-none placeholder:text-stone-600 transition-colors"
                         />
                       </div>
                     </div>

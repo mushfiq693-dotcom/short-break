@@ -176,7 +176,7 @@ export function AdminDashboard({ onNavigateToSales }) {
 
               <button
                 onClick={onNavigateToSales}
-                className="hero-candle-cta py-2.5 px-4 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-md"
+                className="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 text-stone-950 font-bold py-2 px-3.5 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shadow-xs border border-amber-300/40 active:scale-95 transition-all"
               >
                 <TrendingUp className="w-3.5 h-3.5" />
                 <span>Sales Overview</span>

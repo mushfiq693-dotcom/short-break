@@ -172,9 +172,9 @@ export function AdminSales({ onNavigateToOrders }) {
 
               <button
                 onClick={exportCSV}
-                className="hero-candle-cta py-2.5 px-4 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-md"
+                className="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 text-stone-950 font-bold py-2 px-3.5 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shadow-xs border border-amber-300/40 active:scale-95 transition-all"
               >
-                <Download className="w-4 h-4" />
+                <Download className="w-3.5 h-3.5" />
                 <span>Export CSV</span>
               </button>
             </div>
@@ -191,10 +191,10 @@ export function AdminSales({ onNavigateToOrders }) {
               <button
                 key={tab.id}
                 onClick={() => setTimeRange(tab.id)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs transition-all cursor-pointer ${
                   timeRange === tab.id
-                    ? 'hero-candle-cta shadow-md'
-                    : 'glass-panel-dark text-stone-300 hover:text-white'
+                    ? 'bg-amber-400 text-stone-950 font-bold shadow-xs'
+                    : 'glass-panel-dark text-stone-300 hover:text-white border border-stone-800'
                 }`}
               >
                 {tab.label}

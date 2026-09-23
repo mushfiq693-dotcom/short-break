@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { useAuth } from '../context/AuthContext'
+import { useCart } from '../context/CartContext'
 import { 
   Globe, 
   Sparkles, 
@@ -26,8 +28,15 @@ function LinkedInIcon(props) {
 }
 
 export function DeveloperCreditWidget() {
+  const { user } = useAuth()
+  const { totalCount } = useCart()
   const [isOpen, setIsOpen] = useState(false)
   const widgetRef = useRef(null)
+
+  const hasStickyCart = user && totalCount > 0
+  const bottomClass = hasStickyCart 
+    ? 'bottom-20 right-3 md:bottom-5 md:right-5' 
+    : 'bottom-3 right-3 md:bottom-5 md:right-5'
 
   // Close popup when clicking outside
   useEffect(() => {
@@ -41,12 +50,12 @@ export function DeveloperCreditWidget() {
   }, [])
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 select-none" ref={widgetRef}>
+    <div className={`fixed z-50 select-none transition-all duration-300 ${bottomClass}`} ref={widgetRef}>
       
       {/* Pop-up Card (Floating above the circular avatar, matching dark ambient food cart palette) */}
       {isOpen && (
         <div 
-          className="absolute bottom-16 right-0 w-[320px] sm:w-[360px] bg-[#15120F]/95 text-stone-100 rounded-[28px] p-5 sm:p-6 shadow-[0_25px_70px_rgba(0,0,0,0.9),0_0_35px_rgba(245,158,11,0.15)] border border-amber-500/30 backdrop-blur-2xl animate-slideUp origin-bottom-right"
+          className="absolute bottom-14 right-0 w-[calc(100vw-32px)] max-w-[340px] sm:max-w-[360px] bg-[#15120F]/95 text-stone-100 rounded-[28px] p-5 sm:p-6 shadow-[0_25px_70px_rgba(0,0,0,0.9),0_0_35px_rgba(245,158,11,0.15)] border border-amber-500/30 backdrop-blur-2xl animate-slideUp origin-bottom-right"
           style={{ animationDuration: '200ms' }}
         >
           {/* Header */}

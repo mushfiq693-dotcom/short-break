@@ -12,6 +12,19 @@
     background-color: #0E0C0A;
     color: #F5F5F4;
     overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Prevent 300ms tap delay on mobile devices */
+  button, a, input, select, textarea {
+    touch-action: manipulation;
+  }
+
+  /* Prevent iOS Mobile Safari auto-zoom on form focus by ensuring 16px minimum font size */
+  @media (max-width: 640px) {
+    input, select, textarea {
+      font-size: 16px !important;
+    }
   }
 
   h1, h2, h3, h4, h5, h6, .font-display {
@@ -21,6 +34,15 @@
   .font-signage {
     font-family: var(--font-signage);
   }
+}
+
+/* Mobile Safe Area Inset Support */
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
+}
+
+.bottom-safe {
+  bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
 }
 
 /* Minimalist Dark Food Cart Ambient Background */

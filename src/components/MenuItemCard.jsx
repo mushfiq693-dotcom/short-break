@@ -72,12 +72,13 @@ export function MenuItemCard({ item, rankNumber, onRequireLogin }) {
         {/* Action Controls */}
         <div className="pt-3 border-t border-white/10">
           {inCart ? (
-            <div className="flex items-center justify-between bg-[#221E1A] border border-amber-400/40 rounded-xl p-1.5 shadow-xs">
+            <div className="flex items-center justify-between bg-[#221E1A] border border-amber-400/30 rounded-xl p-1.5 shadow-xs">
               <span className="text-xs font-bold text-amber-300 px-2">In Cart:</span>
               <div className="flex items-center gap-2">
                 <button
+                  type="button"
                   onClick={() => updateQuantity(item.id, inCart.quantity - 1)}
-                  className="w-8 h-8 rounded-lg bg-[#2D2823] hover:bg-stone-700 border border-stone-600 text-white font-black flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer"
+                  className="w-9 h-9 rounded-lg bg-[#2D2823] hover:bg-stone-700 border border-stone-600 text-white font-bold flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer"
                   aria-label="Decrease quantity"
                 >
                   <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -86,8 +87,9 @@ export function MenuItemCard({ item, rankNumber, onRequireLogin }) {
                   {inCart.quantity}
                 </span>
                 <button
+                  type="button"
                   onClick={() => updateQuantity(item.id, inCart.quantity + 1)}
-                  className="w-8 h-8 rounded-lg bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-stone-950 font-black flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer"
+                  className="w-9 h-9 rounded-lg bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-stone-950 font-bold flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer"
                   aria-label="Increase quantity"
                 >
                   <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -96,10 +98,11 @@ export function MenuItemCard({ item, rankNumber, onRequireLogin }) {
             </div>
           ) : (
             <button
+              type="button"
               onClick={handleAction}
-              className={`w-full py-3 px-4 rounded-xl flex items-center justify-center gap-2 font-black text-sm uppercase tracking-wide cursor-pointer transition-all ${
+              className={`w-full min-h-[46px] py-3 px-4 rounded-xl flex items-center justify-center gap-2 font-bold text-xs sm:text-sm uppercase tracking-wide cursor-pointer transition-all active:scale-[0.98] ${
                 addedAnimation 
-                  ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-md' 
+                  ? 'bg-emerald-600 text-white shadow-md' 
                   : user 
                     ? 'food-btn-primary' 
                     : 'hero-candle-cta'

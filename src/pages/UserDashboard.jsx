@@ -106,7 +106,7 @@ export function UserDashboard({ onNavigateHome, onNavigateToMenu }) {
               <button
                 onClick={loadOrders}
                 disabled={refreshing}
-                className="px-3.5 py-2.5 bg-stone-900/80 hover:bg-stone-800 text-stone-200 rounded-xl border border-stone-700 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                className="px-3 py-2 bg-stone-900/80 hover:bg-stone-800 text-stone-200 rounded-xl border border-stone-800 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
                 title="Refresh Orders"
               >
                 <RotateCw className={`w-3.5 h-3.5 text-amber-400 ${refreshing ? 'animate-spin' : ''}`} />
@@ -114,7 +114,7 @@ export function UserDashboard({ onNavigateHome, onNavigateToMenu }) {
               </button>
               <button
                 onClick={onNavigateToMenu || onNavigateHome}
-                className="hero-candle-cta px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-md"
+                className="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 text-stone-950 font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-xs border border-amber-300/40 active:scale-95 transition-all"
               >
                 <Utensils className="w-3.5 h-3.5" />
                 <span>Order Food</span>
@@ -130,17 +130,17 @@ export function UserDashboard({ onNavigateHome, onNavigateToMenu }) {
               ))}
             </div>
           ) : orders.length === 0 ? (
-            <div className="glass-panel-dark rounded-3xl p-12 text-center max-w-lg mx-auto border border-amber-500/20">
-              <div className="w-16 h-16 bg-amber-400/10 text-amber-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-400/30">
-                <ShoppingBag className="w-8 h-8" />
+            <div className="glass-panel-dark rounded-3xl p-8 sm:p-12 text-center max-w-lg mx-auto border border-amber-500/20">
+              <div className="w-14 h-14 bg-amber-400/10 text-amber-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-400/30">
+                <ShoppingBag className="w-7 h-7" />
               </div>
-              <h3 className="text-xl font-black text-amber-50 mb-2 font-display">No Orders Placed Yet</h3>
+              <h3 className="text-xl font-bold text-amber-50 mb-2 font-display">No Orders Placed Yet</h3>
               <p className="text-stone-300 text-xs sm:text-sm mb-6 leading-relaxed">
                 You haven't ordered any snacks yet. Explore our 3 signature specials and pick up fresh off the cart!
               </p>
               <button
                 onClick={onNavigateToMenu || onNavigateHome}
-                className="hero-candle-cta py-3 px-6 rounded-xl font-extrabold text-sm uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer shadow-md"
+                className="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 text-stone-950 font-bold py-2.5 px-5 rounded-xl text-xs sm:text-sm uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer shadow-xs border border-amber-300/40 active:scale-95 transition-all"
               >
                 <Utensils className="w-4 h-4" />
                 <span>Explore The 3 Specials</span>

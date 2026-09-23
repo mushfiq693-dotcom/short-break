@@ -1,18 +1,25 @@
 import React, { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { useCart } from '../context/CartContext'
 import { DEMO_ACCOUNTS } from '../lib/storage'
 import { Zap, ChevronUp, ChevronDown, Check, UserCheck, Shield, ShoppingBag, X } from 'lucide-react'
 
 export function DemoSwitcher({ onSwitchRole }) {
   const { user, loginAsDemo, signOut } = useAuth()
+  const { totalCount } = useCart()
   const [isOpen, setIsOpen] = useState(false)
   const [minimized, setMinimized] = useState(false)
+
+  const hasStickyCart = user && totalCount > 0
+  const bottomPositionClass = hasStickyCart 
+    ? 'bottom-20 left-3 md:bottom-3 md:left-3' 
+    : 'bottom-3 left-3'
 
   if (minimized) {
     return (
       <button
         onClick={() => setMinimized(false)}
-        className="fixed bottom-3 left-3 z-40 bg-stone-900/90 hover:bg-stone-850 text-amber-300 text-[11px] font-bold px-2.5 py-1.5 rounded-full border border-amber-500/30 shadow-lg backdrop-blur-md transition-all flex items-center gap-1.5 cursor-pointer"
+        className={`fixed z-40 bg-stone-900/90 hover:bg-stone-850 text-amber-300 text-[11px] font-bold px-2.5 py-1.5 rounded-full border border-amber-500/30 shadow-lg backdrop-blur-md transition-all flex items-center gap-1.5 cursor-pointer ${bottomPositionClass}`}
         title="Open Demo Role Switcher"
       >
         <Zap className="w-3 h-3 text-amber-400 fill-amber-400" />
@@ -36,7 +43,7 @@ export function DemoSwitcher({ onSwitchRole }) {
   }
 
   return (
-    <div className="fixed bottom-3 left-3 z-40 select-none">
+    <div className={`fixed z-40 select-none transition-all duration-300 ${bottomPositionClass}`}>
       {/* Dropdown Menu */}
       {isOpen && (
         <div className="mb-2 w-64 bg-[#161311]/95 backdrop-blur-md rounded-2xl border border-amber-500/30 shadow-[0_10px_30px_rgba(0,0,0,0.8)] p-2.5 animate-slideUp text-white">

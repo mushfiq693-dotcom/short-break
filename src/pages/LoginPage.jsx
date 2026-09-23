@@ -169,10 +169,11 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
                   <input
                     type="text"
                     required
+                    autoComplete="name"
                     placeholder="e.g. Tanvir Hasan"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-3.5 py-2.5 text-sm bg-[#181512] text-white rounded-xl border border-stone-800 focus:border-amber-400 focus:outline-hidden font-medium placeholder:text-stone-600 transition-colors"
+                    className="w-full px-3.5 py-3 text-base sm:text-sm bg-[#181512] text-white rounded-xl border border-stone-800 focus:border-amber-400 focus:outline-hidden font-medium placeholder:text-stone-600 transition-colors"
                   />
                 </div>
 
@@ -193,13 +194,15 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
                     type="tel"
                     required
                     maxLength={11}
+                    inputMode="tel"
+                    autoComplete="tel"
                     placeholder="e.g. 01712345678"
                     value={phone}
                     onChange={(e) => {
                       const val = e.target.value.replace(/\D/g, '').slice(0, 11)
                       setPhone(val)
                     }}
-                    className="w-full px-3.5 py-2.5 text-sm bg-[#181512] text-white rounded-xl border border-stone-800 focus:border-amber-400 focus:outline-hidden font-mono placeholder:text-stone-600 transition-colors"
+                    className="w-full px-3.5 py-3 text-base sm:text-sm bg-[#181512] text-white rounded-xl border border-stone-800 focus:border-amber-400 focus:outline-hidden font-mono placeholder:text-stone-600 transition-colors"
                   />
                 </div>
 
@@ -212,10 +215,12 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
                   <input
                     type="email"
                     required
+                    inputMode="email"
+                    autoComplete="email"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-3.5 py-2.5 text-sm bg-[#181512] text-white rounded-xl border border-stone-800 focus:border-amber-400 focus:outline-hidden font-medium placeholder:text-stone-600 transition-colors"
+                    className="w-full px-3.5 py-3 text-base sm:text-sm bg-[#181512] text-white rounded-xl border border-stone-800 focus:border-amber-400 focus:outline-hidden font-medium placeholder:text-stone-600 transition-colors"
                   />
                 </div>
               </>
@@ -231,10 +236,11 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
                   required
                   autoCapitalize="none"
                   autoCorrect="off"
+                  autoComplete="username"
                   placeholder="e.g. mahim@shortbreak.com or 01641508111"
                   value={loginIdentifier}
                   onChange={(e) => setLoginIdentifier(e.target.value)}
-                  className="w-full px-3.5 py-2.5 text-sm bg-[#181512] text-white rounded-xl border border-stone-800 focus:border-amber-400 focus:outline-hidden font-medium placeholder:text-stone-600 transition-colors"
+                  className="w-full px-3.5 py-3 text-base sm:text-sm bg-[#181512] text-white rounded-xl border border-stone-800 focus:border-amber-400 focus:outline-hidden font-medium placeholder:text-stone-600 transition-colors"
                 />
               </div>
             )}
@@ -248,10 +254,11 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
               <input
                 type="password"
                 required
+                autoComplete="current-password"
                 placeholder="password123 for demo"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm bg-[#181512] text-white rounded-xl border border-stone-800 focus:border-amber-400 focus:outline-hidden font-medium placeholder:text-stone-600 transition-colors"
+                className="w-full px-3.5 py-3 text-base sm:text-sm bg-[#181512] text-white rounded-xl border border-stone-800 focus:border-amber-400 focus:outline-hidden font-medium placeholder:text-stone-600 transition-colors"
               />
             </div>
 
@@ -275,7 +282,7 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-stone-950 font-bold rounded-xl text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow-md transition-all active:scale-[0.99] disabled:opacity-50 mt-3"
+              className="w-full min-h-[48px] py-3 px-4 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-stone-950 font-bold rounded-xl text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow-md transition-all active:scale-[0.99] disabled:opacity-50 mt-3"
             >
               {loading ? (
                 <div className="w-4 h-4 border-2 border-stone-950 border-t-transparent rounded-full animate-spin" />
