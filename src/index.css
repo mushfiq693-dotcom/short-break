@@ -33,58 +33,58 @@
 
 /* Minimalist Lantern-Lit Dark Glass Food Card */
 .food-card-minimal {
-  background: rgba(22, 19, 16, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 235, 200, 0.12);
-  box-shadow: 0 10px 35px -5px rgba(0, 0, 0, 0.6), 0 0 35px -10px rgba(232, 135, 30, 0.08);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgba(20, 17, 14, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  transition: all 0.25s ease-out;
 }
 
 .food-card-minimal:hover {
-  transform: translateY(-4px);
-  border-color: rgba(245, 158, 11, 0.5);
-  box-shadow: 0 20px 45px -5px rgba(0, 0, 0, 0.8), 0 0 45px -5px rgba(245, 158, 11, 0.18);
+  transform: translateY(-3px);
+  border-color: rgba(245, 158, 11, 0.35);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(245, 158, 11, 0.08);
 }
 
 /* Minimal Sleek Primary Gradient Button */
 .food-btn-primary {
-  background-image: linear-gradient(135deg, #F43F5E 0%, #E11D48 60%, #BE123C 100%);
+  background-image: linear-gradient(135deg, #E11D48 0%, #BE123C 100%);
   color: #FFFFFF;
   font-weight: 700;
-  box-shadow: 0 4px 16px -1px rgba(225, 29, 72, 0.4);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 10px rgba(225, 29, 72, 0.25);
+  transition: all 0.2s ease;
 }
 
 .food-btn-primary:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 22px -2px rgba(225, 29, 72, 0.55);
-  filter: brightness(1.06);
+  background-image: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(225, 29, 72, 0.35);
 }
 
 .food-btn-primary:active:not(:disabled) {
-  transform: translateY(1px);
-  box-shadow: 0 2px 8px -1px rgba(225, 29, 72, 0.3);
+  transform: scale(0.98);
 }
 
 /* Minimalist Golden Glow Hero CTA */
 .hero-candle-cta {
-  background-image: linear-gradient(135deg, #FBBF24 0%, #F59E0B 50%, #D97706 100%);
-  color: #180D00;
-  font-weight: 800;
-  box-shadow: 0 6px 24px -2px rgba(245, 158, 11, 0.45);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background-image: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  color: #160E02;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 2px 12px rgba(245, 158, 11, 0.3);
+  transition: all 0.2s ease;
 }
 
 .hero-candle-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px -3px rgba(245, 158, 11, 0.65);
-  filter: brightness(1.06);
+  background-image: linear-gradient(135deg, #FDE68A 0%, #FBBF24 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.45);
 }
 
 .hero-candle-cta:active {
-  transform: translateY(1px);
-  box-shadow: 0 3px 12px -1px rgba(245, 158, 11, 0.35);
+  transform: scale(0.98);
 }
 
 /* Minimal Glassmorphism Panels */

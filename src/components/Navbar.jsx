@@ -12,7 +12,8 @@ import {
   TrendingUp, 
   ChevronDown,
   Phone,
-  ArrowLeft
+  ArrowLeft,
+  Sparkles
 } from 'lucide-react'
 
 export function Navbar({ activePage, setActivePage }) {
@@ -32,18 +33,15 @@ export function Navbar({ activePage, setActivePage }) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const handleNav = (page) => {
-    setActivePage(page)
+  const handleNav = (page, scrollToMenu = false) => {
+    setActivePage(page, scrollToMenu)
     setProfileDropdownOpen(false)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  // ---------------------------------------------------------------------------
-  // 1. MINIMALIST SLEEK NAVBAR FOR LOGIN / REGISTRATION PAGE
-  // ---------------------------------------------------------------------------
+  // 1. MINIMALIST NAVBAR FOR LOGIN / REGISTRATION PAGE
   if (activePage === 'login') {
     return (
-      <header className="sticky top-0 z-40 bg-[#0E0C0A]/90 backdrop-blur-md text-white border-b border-amber-500/20 shadow-lg transition-all">
+      <header className="sticky top-0 z-40 bg-[#0E0C0A]/90 backdrop-blur-md text-white border-b border-white/10 transition-all select-none">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">
             <Logo 
@@ -52,8 +50,8 @@ export function Navbar({ activePage, setActivePage }) {
             />
 
             <button
-              onClick={() => handleNav('home')}
-              className="px-3 py-1.5 bg-stone-900/90 hover:bg-stone-800 text-amber-300 font-bold text-xs rounded-xl border border-stone-700 hover:border-amber-400 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+              onClick={() => handleNav('home', true)}
+              className="px-3.5 py-1.5 bg-stone-900/90 hover:bg-stone-800 text-stone-200 hover:text-amber-300 font-bold text-xs rounded-xl border border-stone-800 hover:border-amber-400/40 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back to Menu</span>
@@ -64,11 +62,9 @@ export function Navbar({ activePage, setActivePage }) {
     )
   }
 
-  // ---------------------------------------------------------------------------
-  // 2. ULTRA-COMPACT BG-RELEVANT NAVBAR (GUEST: ONLY LOGO & SIGN IN; USER: CART & PROFILE)
-  // ---------------------------------------------------------------------------
+  // 2. MAIN MODERN SLEEK NAVBAR
   return (
-    <header className="sticky top-0 z-40 bg-[#0E0C0A]/85 backdrop-blur-md text-white border-b border-amber-500/20 shadow-xl transition-all select-none">
+    <header className="sticky top-0 z-40 bg-[#0E0C0A]/90 backdrop-blur-md text-white border-b border-white/10 transition-all select-none">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14 sm:h-16">
           
@@ -79,20 +75,20 @@ export function Navbar({ activePage, setActivePage }) {
           />
 
           {/* Right Controls */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-3">
             
             {user ? (
               <>
-                {/* Cart Button (Only visible for authenticated users) */}
+                {/* Minimal Cart Button */}
                 <button
                   onClick={() => setIsCartOpen(true)}
-                  className="relative px-3 py-1.5 bg-amber-400 hover:bg-amber-300 text-stone-950 font-black rounded-xl border-2 border-stone-950 shadow-[2px_2px_0px_#BE123C] flex items-center gap-1.5 text-xs transition-all active:translate-y-0.5 cursor-pointer"
+                  className="relative px-3.5 py-1.5 bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold rounded-xl border border-amber-300/40 flex items-center gap-1.5 text-xs transition-all active:scale-95 cursor-pointer shadow-xs"
                   aria-label="Open Cart"
                 >
-                  <ShoppingBag className="w-3.5 h-3.5 stroke-[2.5]" />
-                  <span className="hidden sm:inline">Cart</span>
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline font-bold">Cart</span>
                   {totalCount > 0 && (
-                    <span className="px-1.5 py-0.2 bg-rose-600 text-white text-[10px] font-black rounded-full animate-bounce">
+                    <span className="px-1.5 py-0.2 bg-rose-600 text-white text-[10px] font-black rounded-full">
                       {totalCount}
                     </span>
                   )}
@@ -101,17 +97,17 @@ export function Navbar({ activePage, setActivePage }) {
                 {/* Profile / Auth Dropdown */}
                 <div className="relative" ref={dropdownRef}>
                   
-                  {/* Profile Trigger Button */}
+                  {/* Profile Trigger Button (Minimal Sleek Pill) */}
                   <button
                     onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                    className={`flex items-center gap-2 bg-[#1B1815]/90 hover:bg-[#25201C] text-stone-200 py-1 px-2.5 rounded-xl border-2 transition-all cursor-pointer ${
+                    className={`flex items-center gap-2 bg-[#171412] hover:bg-[#201C18] text-stone-200 py-1.5 px-2.5 rounded-xl border transition-all cursor-pointer ${
                       profileDropdownOpen 
-                        ? 'border-amber-400 shadow-[0px_0px_10px_rgba(245,158,11,0.35)]' 
-                        : 'border-stone-700/80 hover:border-amber-400/60'
+                        ? 'border-amber-400/60 shadow-xs' 
+                        : 'border-stone-800 hover:border-stone-700'
                     }`}
                     aria-expanded={profileDropdownOpen}
                   >
-                    <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-gradient-to-br from-rose-600 to-rose-700 text-white font-black flex items-center justify-center text-[11px] border border-amber-400 shadow-xs">
+                    <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-rose-600 to-rose-700 text-white font-bold flex items-center justify-center text-[11px] border border-white/10 shadow-xs">
                       {user.name?.[0]?.toUpperCase() || 'U'}
                     </div>
 
@@ -128,21 +124,21 @@ export function Navbar({ activePage, setActivePage }) {
 
                   {/* Dropdown Menu Modal / Card */}
                   {profileDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-[#161412] text-white rounded-2xl border-3 border-amber-400 shadow-[8px_8px_0px_#000000] p-3.5 z-50 animate-slideUp backdrop-blur-md">
+                    <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-[#161311]/95 text-white rounded-2xl border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.8)] p-3 z-50 animate-slideUp backdrop-blur-xl">
                       
                       {/* User Profile Header Card */}
-                      <div className="bg-[#24201C] rounded-xl p-3 border border-stone-800 mb-2.5">
+                      <div className="bg-[#201C18] rounded-xl p-3 border border-stone-800 mb-2.5">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-rose-600 text-white font-black text-sm flex items-center justify-center border-2 border-amber-400 shadow-xs shrink-0">
+                          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-600 to-rose-700 text-white font-black text-sm flex items-center justify-center border border-white/10 shadow-xs shrink-0">
                             {user.name?.[0]?.toUpperCase() || 'U'}
                           </div>
                           <div className="overflow-hidden">
                             <div className="flex items-center gap-2">
-                              <h4 className="text-sm font-black text-white truncate">{user.name || 'Foodie'}</h4>
-                              <span className={`text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                              <h4 className="text-sm font-bold text-white truncate">{user.name || 'Foodie'}</h4>
+                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${
                                 isAdmin ? 'bg-rose-600 text-white' : 'bg-amber-400 text-stone-950'
                               }`}>
-                                {isAdmin ? 'Cart Admin' : 'Customer'}
+                                {isAdmin ? 'Admin' : 'Customer'}
                               </span>
                             </div>
                             {user.phone && (
@@ -157,14 +153,14 @@ export function Navbar({ activePage, setActivePage }) {
                       </div>
 
                       {/* Navigation Menu Options */}
-                      <div className="space-y-1 text-xs sm:text-sm font-bold">
+                      <div className="space-y-1 text-xs sm:text-sm font-semibold">
                         
                         {/* Browse Menu */}
                         <button
-                          onClick={() => handleNav('home')}
-                          className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all cursor-pointer ${
+                          onClick={() => handleNav('home', true)}
+                          className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all cursor-pointer ${
                             activePage === 'home'
-                              ? 'bg-amber-400 text-stone-950 font-black shadow-xs'
+                              ? 'bg-amber-400 text-stone-950 font-bold shadow-xs'
                               : 'text-stone-300 hover:text-white hover:bg-stone-850'
                           }`}
                         >
@@ -176,14 +172,14 @@ export function Navbar({ activePage, setActivePage }) {
                         {!isAdmin && (
                           <button
                             onClick={() => handleNav('user-dashboard')}
-                            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all cursor-pointer ${
+                            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all cursor-pointer ${
                               activePage === 'user-dashboard'
-                                ? 'bg-amber-400 text-stone-950 font-black shadow-xs'
+                                ? 'bg-amber-400 text-stone-950 font-bold shadow-xs'
                                 : 'text-stone-300 hover:text-white hover:bg-stone-850'
                             }`}
                           >
                             <LayoutDashboard className="w-4 h-4 text-amber-400" />
-                            <span>User Dashboard (My Orders)</span>
+                            <span>My Orders Dashboard</span>
                           </button>
                         )}
 
@@ -192,9 +188,9 @@ export function Navbar({ activePage, setActivePage }) {
                           <>
                             <button
                               onClick={() => handleNav('admin-orders')}
-                              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all cursor-pointer ${
+                              className={`w-full flex items-center justify-between px-3 py-2 rounded-xl transition-all cursor-pointer ${
                                 activePage === 'admin-orders'
-                                  ? 'bg-rose-600 text-white font-black shadow-xs'
+                                  ? 'bg-rose-600 text-white font-bold shadow-xs'
                                   : 'text-stone-300 hover:text-white hover:bg-stone-850'
                               }`}
                             >
@@ -207,14 +203,14 @@ export function Navbar({ activePage, setActivePage }) {
 
                             <button
                               onClick={() => handleNav('admin-sales')}
-                              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all cursor-pointer ${
+                              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all cursor-pointer ${
                                 activePage === 'admin-sales'
-                                  ? 'bg-amber-400 text-stone-950 font-black shadow-xs'
+                                  ? 'bg-amber-400 text-stone-950 font-bold shadow-xs'
                                   : 'text-stone-300 hover:text-white hover:bg-stone-850'
                               }`}
                             >
                               <TrendingUp className="w-4 h-4 text-amber-400" />
-                              <span>Sales & Revenue Analytics</span>
+                              <span>Sales & Analytics</span>
                             </button>
                           </>
                         )}
@@ -227,7 +223,7 @@ export function Navbar({ activePage, setActivePage }) {
                             setProfileDropdownOpen(false)
                             signOut()
                           }}
-                          className="w-full flex items-center justify-center gap-2 py-2 bg-stone-900 hover:bg-rose-950/80 text-rose-400 hover:text-rose-200 rounded-xl border border-rose-900/40 text-xs font-bold transition-all cursor-pointer"
+                          className="w-full flex items-center justify-center gap-2 py-2 bg-stone-900 hover:bg-stone-800 text-stone-300 hover:text-rose-300 rounded-xl border border-stone-800 text-xs font-semibold transition-all cursor-pointer"
                         >
                           <LogOut className="w-3.5 h-3.5" />
                           <span>Sign Out</span>
@@ -240,13 +236,13 @@ export function Navbar({ activePage, setActivePage }) {
                 </div>
               </>
             ) : (
-              /* Guest: Clean Sign In CTA button */
+              /* Guest: Minimal Sign In Button */
               <button
                 onClick={() => handleNav('login')}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-black bg-amber-400 hover:bg-amber-300 text-stone-950 rounded-xl transition-all shadow-[2px_2px_0px_#000] cursor-pointer active:translate-y-0.5"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold bg-amber-400 hover:bg-amber-300 text-stone-950 rounded-xl transition-all shadow-xs cursor-pointer active:scale-95"
               >
-                <LogIn className="w-3.5 h-3.5 stroke-[2.5]" />
-                <span>Sign In</span>
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Sign In / Demo</span>
               </button>
             )}
 

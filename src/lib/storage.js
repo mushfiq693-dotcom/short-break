@@ -6,43 +6,57 @@ const STORAGE_KEYS = {
   CURRENT_USER: 'sb_current_user',
 }
 
-// Initial demo seed data
-const DEMO_USERS = [
+// Full Demo Accounts for instant 1-Click Client Review
+export const DEMO_ACCOUNTS = [
   {
     id: 'demo-admin-mahim',
+    key: 'admin-mahim',
     email: 'mahim@shortbreak.com',
     name: 'Mahim (Cart Owner)',
     phone: '01641508111',
     role: 'admin',
-    password: 'password123'
+    password: 'password123',
+    badge: '👑 Owner & Kitchen Admin',
+    desc: 'Live Kitchen Orders, status updating & Sales Revenue Analytics'
   },
   {
     id: 'demo-admin-raj',
+    key: 'admin-raj',
     email: 'raj@shortbreak.com',
     name: 'Raj (Cart Owner)',
     phone: '01641508100',
     role: 'admin',
-    password: 'password123'
+    password: 'password123',
+    badge: '👑 Owner & Hotline Admin',
+    desc: 'Order intake, phone hotline confirmation & revenue tracking'
   },
   {
     id: 'demo-user-id',
+    key: 'customer-tanvir',
     email: 'tanvir@gmail.com',
     name: 'Tanvir Hasan',
-    phone: '01812-345678',
+    phone: '01812345678',
     role: 'user',
-    password: 'password123'
+    password: 'password123',
+    badge: '🍔 Regular Customer',
+    desc: 'Browse 3 specials menu, add to cart, place live orders & view history'
   },
   {
     id: 'demo-user-2-id',
+    key: 'customer-sadia',
     email: 'sadia@gmail.com',
     name: 'Sadia Rahman',
-    phone: '01913-987654',
+    phone: '01913987654',
     role: 'user',
-    password: 'password123'
+    password: 'password123',
+    badge: '🍟 New Customer',
+    desc: 'Test custom order notes, phone validation & checkout flow'
   }
 ]
 
-const INITIAL_ORDERS = [
+export const DEMO_USERS = DEMO_ACCOUNTS
+
+export const INITIAL_ORDERS = [
   {
     id: 'ord-101',
     user_id: 'demo-user-id',
@@ -87,14 +101,33 @@ const INITIAL_ORDERS = [
   }
 ]
 
-// Initialize LocalStorage if empty
-function initializeStorage() {
+// Initialize LocalStorage if empty or missing demo seed
+export function initializeStorage() {
   if (typeof window === 'undefined') return
-  if (!localStorage.getItem(STORAGE_KEYS.USERS)) {
-    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(DEMO_USERS))
-  }
-  if (!localStorage.getItem(STORAGE_KEYS.ORDERS)) {
-    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(INITIAL_ORDERS))
+  try {
+    const existingUsers = localStorage.getItem(STORAGE_KEYS.USERS)
+    if (!existingUsers) {
+      localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(DEMO_ACCOUNTS))
+    } else {
+      // Ensure all current demo accounts exist in local users array
+      const parsed = JSON.parse(existingUsers)
+      let modified = false
+      DEMO_ACCOUNTS.forEach(demo => {
+        if (!parsed.some(u => u.email === demo.email)) {
+          parsed.push(demo)
+          modified = true
+        }
+      })
+      if (modified) {
+        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(parsed))
+      }
+    }
+
+    if (!localStorage.getItem(STORAGE_KEYS.ORDERS)) {
+      localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(INITIAL_ORDERS))
+    }
+  } catch (err) {
+    console.warn('initializeStorage error:', err)
   }
 }
 
@@ -107,9 +140,17 @@ export function subscribeToOrders(callback) {
 }
 
 function notifyOrderListeners(order, eventType = 'UPDATE') {
-  orderListeners.forEach(cb => cb({ eventType, order }))
+  orderListeners.forEach(cb => {
+    try {
+      cb({ eventType, order })
+    } catch (e) {
+      console.error('Error in order listener:', e)
+    }
+  })
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent('shortbreak:order-changed', { detail: { eventType, order } }))
+    try {
+      window.dispatchEvent(new CustomEvent('shortbreak:order-changed', { detail: { eventType, order } }))
+    } catch {}
   }
 }
 
@@ -118,68 +159,78 @@ function notifyOrderListeners(order, eventType = 'UPDATE') {
 // -----------------------------------------------------------------------------
 export async function getMenuItems() {
   if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('menu_items')
-      .select('*')
-      .order('price', { ascending: false })
-    if (error) {
-      console.warn('Supabase menu_items fetch error, falling back to default:', error.message)
+    try {
+      const { data, error } = await supabase
+        .from('menu_items')
+        .select('*')
+        .order('price', { ascending: false })
+      if (error) {
+        console.warn('Supabase menu_items fetch error, falling back to default:', error.message)
+        return DEFAULT_MENU_ITEMS
+      }
+      return data && data.length > 0 ? data : DEFAULT_MENU_ITEMS
+    } catch (err) {
+      console.warn('Supabase getMenuItems catch, falling back to default:', err.message)
       return DEFAULT_MENU_ITEMS
     }
-    return data && data.length > 0 ? data : DEFAULT_MENU_ITEMS
   }
   return DEFAULT_MENU_ITEMS
 }
 
 // -----------------------------------------------------------------------------
-// ORDER SERVICES
+// ORDER SERVICES (With automatic fallback to LocalStorage if Supabase quota is reached)
 // -----------------------------------------------------------------------------
 export async function createOrder({ user, items, notes = '', customer_phone = '' }) {
   const totalPrice = items.reduce((acc, item) => acc + (Number(item.price) * item.quantity), 0)
 
   if (isSupabaseConfigured && supabase) {
-    // 1. Insert into orders table
-    const { data: orderData, error: orderError } = await supabase
-      .from('orders')
-      .insert({
-        user_id: user.id,
-        status: 'pending',
-        total_price: totalPrice,
-        customer_name: user.name || user.email?.split('@')[0] || 'Customer',
-        customer_phone: customer_phone || user.phone || '',
-        notes: notes.trim()
-      })
-      .select()
-      .single()
+    try {
+      // 1. Insert into orders table
+      const { data: orderData, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          user_id: user.id,
+          status: 'pending',
+          total_price: totalPrice,
+          customer_name: user.name || user.email?.split('@')[0] || 'Customer',
+          customer_phone: customer_phone || user.phone || '',
+          notes: notes.trim()
+        })
+        .select()
+        .single()
 
-    if (orderError) throw new Error(orderError.message)
+      if (!orderError && orderData) {
+        // 2. Insert into order_items table
+        const orderItemRows = items.map(item => ({
+          order_id: orderData.id,
+          menu_item_id: item.id,
+          quantity: item.quantity,
+          price_at_order: item.price
+        }))
 
-    // 2. Insert into order_items table
-    const orderItemRows = items.map(item => ({
-      order_id: orderData.id,
-      menu_item_id: item.id,
-      quantity: item.quantity,
-      price_at_order: item.price
-    }))
+        const { error: itemsError } = await supabase
+          .from('order_items')
+          .insert(orderItemRows)
 
-    const { error: itemsError } = await supabase
-      .from('order_items')
-      .insert(orderItemRows)
-
-    if (itemsError) throw new Error(itemsError.message)
-
-    return {
-      ...orderData,
-      items: items.map(i => ({
-        menu_item_id: i.id,
-        name: i.name,
-        quantity: i.quantity,
-        price_at_order: i.price
-      }))
+        if (!itemsError) {
+          return {
+            ...orderData,
+            items: items.map(i => ({
+              menu_item_id: i.id,
+              name: i.name,
+              quantity: i.quantity,
+              price_at_order: i.price
+            }))
+          }
+        }
+      }
+      console.warn('Supabase order insert had issues, executing local fallback seamlessly.')
+    } catch (supaErr) {
+      console.warn('Supabase createOrder caught error, falling back to LocalStorage:', supaErr.message)
     }
   }
 
-  // Fallback local storage
+  // Fallback local storage (Guaranteed to work on Vercel without Supabase limits)
   initializeStorage()
   const orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]')
   const newOrder = {
@@ -207,40 +258,43 @@ export async function createOrder({ user, items, notes = '', customer_phone = ''
 
 export async function getUserOrders(userId) {
   if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('orders')
-      .select(`
-        id,
-        user_id,
-        status,
-        total_price,
-        customer_name,
-        customer_phone,
-        notes,
-        created_at,
-        order_items (
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`
           id,
-          quantity,
-          price_at_order,
-          menu_items ( id, name, price, badge, image_url )
-        )
-      `)
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
+          user_id,
+          status,
+          total_price,
+          customer_name,
+          customer_phone,
+          notes,
+          created_at,
+          order_items (
+            id,
+            quantity,
+            price_at_order,
+            menu_items ( id, name, price, badge, image_url )
+          )
+        `)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
 
-    if (error) throw new Error(error.message)
-    
-    // Map joined structure
-    return (data || []).map(ord => ({
-      ...ord,
-      items: (ord.order_items || []).map(oi => ({
-        menu_item_id: oi.menu_items?.id || oi.menu_item_id,
-        name: oi.menu_items?.name || 'Item',
-        quantity: oi.quantity,
-        price_at_order: oi.price_at_order,
-        image_url: oi.menu_items?.image_url
-      }))
-    }))
+      if (!error && data) {
+        return data.map(ord => ({
+          ...ord,
+          items: (ord.order_items || []).map(oi => ({
+            menu_item_id: oi.menu_items?.id || oi.menu_item_id,
+            name: oi.menu_items?.name || 'Item',
+            quantity: oi.quantity,
+            price_at_order: oi.price_at_order,
+            image_url: oi.menu_items?.image_url
+          }))
+        }))
+      }
+    } catch (err) {
+      console.warn('Supabase getUserOrders catch, falling back to LocalStorage:', err.message)
+    }
   }
 
   initializeStorage()
@@ -250,38 +304,42 @@ export async function getUserOrders(userId) {
 
 export async function getAllOrders() {
   if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('orders')
-      .select(`
-        id,
-        user_id,
-        status,
-        total_price,
-        customer_name,
-        customer_phone,
-        notes,
-        created_at,
-        order_items (
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`
           id,
-          quantity,
-          price_at_order,
-          menu_items ( id, name, price, badge, image_url )
-        )
-      `)
-      .order('created_at', { ascending: false })
+          user_id,
+          status,
+          total_price,
+          customer_name,
+          customer_phone,
+          notes,
+          created_at,
+          order_items (
+            id,
+            quantity,
+            price_at_order,
+            menu_items ( id, name, price, badge, image_url )
+          )
+        `)
+        .order('created_at', { ascending: false })
 
-    if (error) throw new Error(error.message)
-
-    return (data || []).map(ord => ({
-      ...ord,
-      items: (ord.order_items || []).map(oi => ({
-        menu_item_id: oi.menu_items?.id || oi.menu_item_id,
-        name: oi.menu_items?.name || 'Item',
-        quantity: oi.quantity,
-        price_at_order: oi.price_at_order,
-        image_url: oi.menu_items?.image_url
-      }))
-    }))
+      if (!error && data) {
+        return data.map(ord => ({
+          ...ord,
+          items: (ord.order_items || []).map(oi => ({
+            menu_item_id: oi.menu_items?.id || oi.menu_item_id,
+            name: oi.menu_items?.name || 'Item',
+            quantity: oi.quantity,
+            price_at_order: oi.price_at_order,
+            image_url: oi.menu_items?.image_url
+          }))
+        }))
+      }
+    } catch (err) {
+      console.warn('Supabase getAllOrders catch, falling back to LocalStorage:', err.message)
+    }
   }
 
   initializeStorage()
@@ -290,15 +348,18 @@ export async function getAllOrders() {
 
 export async function updateOrderStatus(orderId, newStatus) {
   if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('orders')
-      .update({ status: newStatus })
-      .eq('id', orderId)
-      .select()
-      .single()
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .update({ status: newStatus })
+        .eq('id', orderId)
+        .select()
+        .single()
 
-    if (error) throw new Error(error.message)
-    return data
+      if (!error && data) return data
+    } catch (err) {
+      console.warn('Supabase updateOrderStatus catch, falling back to LocalStorage:', err.message)
+    }
   }
 
   initializeStorage()

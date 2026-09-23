@@ -86,8 +86,12 @@ export function OrderCard({ order, isAdmin = false, onUpdateStatus }) {
         {/* Customer & Phone Banner */}
         <div className="mt-3 bg-[#1D1915] p-3 rounded-xl border border-amber-500/20 space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-stone-400 font-bold uppercase text-[10px] tracking-wider">Customer Contact</span>
-            <span className="text-stone-400 font-mono text-[10px]">Verification Line</span>
+            <span className="text-stone-400 font-bold uppercase text-[10px] tracking-wider">
+              {isAdmin ? 'Customer Contact' : 'Your Contact Details'}
+            </span>
+            <span className="text-stone-400 font-mono text-[10px]">
+              {isAdmin ? 'Verification Line' : 'Order Phone'}
+            </span>
           </div>
 
           <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -97,15 +101,22 @@ export function OrderCard({ order, isAdmin = false, onUpdateStatus }) {
             </div>
 
             {order.customer_phone ? (
-              <a
-                href={`tel:${order.customer_phone}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 rounded-lg text-xs font-mono font-bold border border-emerald-500/40 transition-colors shadow-xs"
-                title="Tap to Call Customer"
-              >
-                <PhoneCall className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-                <span>{order.customer_phone}</span>
-                <span className="text-[10px] font-sans underline ml-0.5 hidden sm:inline">Call</span>
-              </a>
+              isAdmin ? (
+                <a
+                  href={`tel:${order.customer_phone}`}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 rounded-lg text-xs font-mono font-bold border border-emerald-500/40 transition-colors shadow-xs"
+                  title="Tap to Call Customer"
+                >
+                  <PhoneCall className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                  <span>{order.customer_phone}</span>
+                  <span className="text-[10px] font-sans underline ml-0.5 hidden sm:inline">Call</span>
+                </a>
+              ) : (
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-stone-900/80 text-stone-300 rounded-lg text-xs font-mono border border-stone-800">
+                  <Phone className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{order.customer_phone}</span>
+                </div>
+              )
             ) : (
               <span className="text-xs text-stone-500 italic">No phone attached</span>
             )}
@@ -156,14 +167,14 @@ export function OrderCard({ order, isAdmin = false, onUpdateStatus }) {
               <div className="flex gap-2">
                 <button
                   onClick={() => onUpdateStatus(order.id, 'confirmed')}
-                  className="flex-1 py-2 px-3 hero-candle-cta rounded-xl font-extrabold text-xs uppercase tracking-wide flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
+                  className="flex-1 py-2 px-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 text-stone-950 font-bold rounded-xl text-xs uppercase tracking-wide flex items-center justify-center gap-1.5 cursor-pointer shadow-xs border border-amber-300/40 transition-all active:scale-98"
                 >
                   <ChefHat className="w-3.5 h-3.5" />
                   <span>Call Done & Confirm</span>
                 </button>
                 <button
                   onClick={() => onUpdateStatus(order.id, 'cancelled')}
-                  className="py-2 px-3 bg-rose-950/80 hover:bg-rose-900 text-rose-300 rounded-xl border border-rose-800/60 font-bold text-xs cursor-pointer"
+                  className="py-2 px-3 bg-stone-900 hover:bg-rose-950 text-stone-400 hover:text-rose-300 rounded-xl border border-stone-800 hover:border-rose-900/60 font-semibold text-xs cursor-pointer transition-colors"
                   title="Cancel Order"
                 >
                   <XCircle className="w-3.5 h-3.5" />
@@ -174,7 +185,7 @@ export function OrderCard({ order, isAdmin = false, onUpdateStatus }) {
             {order.status === 'confirmed' && (
               <button
                 onClick={() => onUpdateStatus(order.id, 'completed')}
-                className="w-full py-2.5 px-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
+                className="w-full py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer shadow-xs border border-emerald-400/30 transition-all active:scale-98"
               >
                 <CheckCircle className="w-3.5 h-3.5" />
                 <span>Mark Food Ready / Served</span>

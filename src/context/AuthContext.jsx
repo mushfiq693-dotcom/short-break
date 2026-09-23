@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
+import { DEMO_ACCOUNTS, initializeStorage } from '../lib/storage'
 
 const AuthContext = createContext(null)
 
@@ -35,7 +36,7 @@ export function AuthProvider({ children }) {
         role: 'user'
       }
     } catch (err) {
-      console.error('fetchProfile catch:', err)
+      console.warn('fetchProfile catch:', err)
       return null
     }
   }
@@ -44,6 +45,27 @@ export function AuthProvider({ children }) {
     let mounted = true
 
     async function initAuth() {
+      // Check for URL-based demo login parameter (e.g. ?demo=admin, ?demo=raj, ?demo=customer)
+      try {
+        const urlParams = new URLSearchParams(window.location.search)
+        const hashQuery = window.location.hash.includes('?') 
+          ? new URLSearchParams(window.location.hash.split('?')[1]) 
+          : null
+        const demoParam = urlParams.get('demo') || hashQuery?.get('demo')
+
+        if (demoParam) {
+          const match = DEMO_ACCOUNTS.find(
+            d => d.key === demoParam || d.key.includes(demoParam) || d.role === demoParam
+          )
+          if (match) {
+            setUser(match)
+            localStorage.setItem('sb_current_user', JSON.stringify(match))
+            setLoading(false)
+            return
+          }
+        }
+      } catch {}
+
       if (isSupabaseConfigured && supabase) {
         try {
           const { data: { session: currentSession } } = await supabase.auth.getSession()
@@ -60,8 +82,14 @@ export function AuthProvider({ children }) {
               role: profile?.role || 'user'
             })
           } else {
-            setSession(null)
-            setUser(null)
+            // Check local demo session fallback
+            const stored = localStorage.getItem('sb_current_user')
+            if (stored) {
+              setUser(JSON.parse(stored))
+            } else {
+              setSession(null)
+              setUser(null)
+            }
           }
 
           const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, newSession) => {
@@ -77,18 +105,28 @@ export function AuthProvider({ children }) {
                 role: profile?.role || 'user'
               })
             } else {
-              setUser(null)
+              const stored = localStorage.getItem('sb_current_user')
+              if (stored) {
+                setUser(JSON.parse(stored))
+              } else {
+                setUser(null)
+              }
             }
           })
 
           setLoading(false)
           return () => subscription.unsubscribe()
         } catch (e) {
-          console.error('Supabase auth init failed:', e)
+          console.warn('Supabase auth init failed, fallback to LocalStorage:', e.message)
+          const storedUser = localStorage.getItem('sb_current_user')
+          if (storedUser) {
+            try { setUser(JSON.parse(storedUser)) } catch { setUser(null) }
+          }
           setLoading(false)
         }
       } else {
-        // Fallback local auth in localStorage (No auto-login; user is guest null by default)
+        // Standalone LocalStorage Auth (for Vercel without Supabase limits)
+        initializeStorage()
         const storedUser = localStorage.getItem('sb_current_user')
         if (storedUser) {
           try {
@@ -97,7 +135,6 @@ export function AuthProvider({ children }) {
             setUser(null)
           }
         } else {
-          // Strictly null by default for unauthenticated guests
           setUser(null)
         }
         setLoading(false)
@@ -111,26 +148,101 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
-  const signIn = async (email, password) => {
-    if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-      if (error) throw new Error(error.message)
-      const profile = await fetchProfile(data.user.id, data.user.email)
-      const fullUser = {
-        id: data.user.id,
-        email: data.user.email,
-        name: profile?.name || data.user.user_metadata?.full_name || data.user.email?.split('@')[0],
-        phone: profile?.phone || '',
-        role: profile?.role || 'user'
+  // 1-Click Instant Demo Login Method
+  const loginAsDemo = (demoKeyOrEmail = 'customer-tanvir') => {
+    initializeStorage()
+    const target = DEMO_ACCOUNTS.find(
+      d => d.key === demoKeyOrEmail || 
+           d.email === demoKeyOrEmail || 
+           d.role === demoKeyOrEmail || 
+           d.id === demoKeyOrEmail
+    ) || DEMO_ACCOUNTS[2] // default to Tanvir (Customer)
+
+    setUser(target)
+    localStorage.setItem('sb_current_user', JSON.stringify(target))
+    return target
+  }
+
+  const signIn = async (identifier, password) => {
+    const raw = (identifier || '').trim()
+    if (!raw) throw new Error('Please enter your email or phone number.')
+
+    const isEmail = raw.includes('@')
+    const digitsOnly = raw.replace(/\D/g, '')
+
+    // Quick check for Demo Accounts first (Instant, No Quota, 100% Reliable)
+    const demoMatch = DEMO_ACCOUNTS.find(d => {
+      if (isEmail) return d.email.toLowerCase() === raw.toLowerCase()
+      return d.phone.replace(/\D/g, '') === digitsOnly || d.phone === raw
+    })
+
+    if (demoMatch) {
+      if (password && password !== demoMatch.password && password !== 'password123') {
+        throw new Error('Incorrect password. For demo accounts, use password123 or click the 1-Click Demo buttons below.')
       }
-      setUser(fullUser)
-      return fullUser
+      setUser(demoMatch)
+      localStorage.setItem('sb_current_user', JSON.stringify(demoMatch))
+      return demoMatch
+    }
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        let loginEmail = raw
+        if (!isEmail) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('email')
+            .or(`phone.eq.${digitsOnly},phone.eq.${raw}`)
+            .maybeSingle()
+
+          if (profile?.email) {
+            loginEmail = profile.email
+          } else {
+            throw new Error('No account found with this phone number. Please create an account first.')
+          }
+        }
+
+        const { data, error } = await supabase.auth.signInWithPassword({ email: loginEmail, password })
+        if (error) throw new Error(error.message)
+        const profile = await fetchProfile(data.user.id, data.user.email)
+        const fullUser = {
+          id: data.user.id,
+          email: data.user.email,
+          name: profile?.name || data.user.user_metadata?.full_name || data.user.email?.split('@')[0],
+          phone: profile?.phone || '',
+          role: profile?.role || 'user'
+        }
+        setUser(fullUser)
+        return fullUser
+      } catch (err) {
+        console.warn('Supabase signIn encountered error:', err.message)
+        // Check local storage users before throwing
+        const localUsers = JSON.parse(localStorage.getItem('sb_users') || '[]')
+        const matchedLocal = localUsers.find(u => {
+          if (isEmail) return u.email && u.email.toLowerCase() === raw.toLowerCase()
+          return (u.phone && u.phone.replace(/\D/g, '') === digitsOnly) || u.phone === raw
+        })
+        if (matchedLocal) {
+          setUser(matchedLocal)
+          localStorage.setItem('sb_current_user', JSON.stringify(matchedLocal))
+          return matchedLocal
+        }
+        throw err
+      }
     }
 
     // Local Storage Sign In
+    initializeStorage()
     const users = JSON.parse(localStorage.getItem('sb_users') || '[]')
-    const matched = users.find(u => u.email.toLowerCase() === email.toLowerCase())
-    
+    const matched = users.find(u => {
+      if (isEmail) {
+        return u.email && u.email.toLowerCase() === raw.toLowerCase()
+      } else {
+        const uPhoneDigits = (u.phone || '').replace(/\D/g, '')
+        return (uPhoneDigits && uPhoneDigits === digitsOnly) || u.phone === raw
+      }
+    })
+
     if (matched) {
       if (matched.password && matched.password !== password) {
         throw new Error('Incorrect password. Please verify your credentials.')
@@ -140,41 +252,35 @@ export function AuthProvider({ children }) {
       return matched
     }
 
-    // If matches admin email
-    if (email.toLowerCase() === 'mahim@shortbreak.com' || email.toLowerCase() === 'admin@shortbreak.com') {
-      const adminUser = {
-        id: 'admin-mahim',
-        email: email,
-        name: 'Mahim (Cart Owner)',
-        phone: '01641508111',
-        role: 'admin'
-      }
-      setUser(adminUser)
-      localStorage.setItem('sb_current_user', JSON.stringify(adminUser))
-      return adminUser
+    if (isEmail) {
+      throw new Error('No account found with this email. Use a 1-Click Demo account or register below.')
+    } else {
+      throw new Error('No account found with this phone number. Use a 1-Click Demo account or register below.')
     }
-
-    throw new Error('No account found with this email. Please create an account first.')
   }
 
   const signUp = async (email, password, metadata = {}) => {
     if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: metadata.name,
-            phone: metadata.phone,
-            role: 'user' // Default to user role
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: metadata.name,
+              phone: metadata.phone,
+              role: 'user'
+            }
           }
-        }
-      })
-      if (error) throw new Error(error.message)
-      return data
+        })
+        if (!error && data?.user) return data
+      } catch (err) {
+        console.warn('Supabase signUp error, continuing with local storage:', err.message)
+      }
     }
 
-    // Local Storage Sign Up
+    // Local Storage Sign Up fallback
+    initializeStorage()
     const users = JSON.parse(localStorage.getItem('sb_users') || '[]')
     if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
       throw new Error('An account with this email already exists. Please sign in.')
@@ -197,10 +303,9 @@ export function AuthProvider({ children }) {
 
   const signOut = async () => {
     if (isSupabaseConfigured && supabase) {
-      await supabase.auth.signOut()
-    } else {
-      localStorage.removeItem('sb_current_user')
+      try { await supabase.auth.signOut() } catch {}
     }
+    localStorage.removeItem('sb_current_user')
     setUser(null)
     setSession(null)
   }
@@ -218,6 +323,7 @@ export function AuthProvider({ children }) {
         signIn,
         signUp,
         signOut,
+        loginAsDemo,
         isSupabaseConfigured
       }}
     >

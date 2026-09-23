@@ -18,13 +18,17 @@ import {
   LogIn,
   UserPlus,
   LayoutDashboard,
-  PhoneCall
+  PhoneCall,
+  Image as ImageIcon,
+  Download
 } from 'lucide-react'
+import { PosterModal } from '../components/PosterModal'
 
 export function HomePage({ onNavigateToOrders, onNavigateToLogin }) {
   const { user } = useAuth()
   const [menuItems, setMenuItems] = useState([])
   const [loading, setLoading] = useState(true)
+  const [isPosterModalOpen, setIsPosterModalOpen] = useState(false)
   const { totalCount, totalAmount, setIsCartOpen } = useCart()
 
   useEffect(() => {
@@ -89,37 +93,34 @@ export function HomePage({ onNavigateToOrders, onNavigateToLogin }) {
             </p>
 
             {/* CTA Action Cluster */}
-            <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center gap-3.5 flex-wrap">
+            <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center gap-3 flex-wrap">
               
-              {/* Warm Amber Candle-Flame Primary CTA with Smooth Scroll (No Hash Jump) */}
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-amber-500/40 rounded-2xl blur-md candle-glow-pulse group-hover:bg-amber-500/70 transition-all pointer-events-none" />
-                <button
-                  type="button"
-                  onClick={() => {
-                    const el = document.getElementById('menu-section')
-                    if (el) el.scrollIntoView({ behavior: 'smooth' })
-                  }}
-                  className="relative inline-flex items-center gap-2.5 hero-candle-cta px-7 py-3.5 rounded-xl text-sm sm:text-base font-extrabold uppercase tracking-wider cursor-pointer"
-                >
-                  <span>See The 3 Specials</span>
-                  <ArrowDown className="w-4 h-4 stroke-[3]" />
-                </button>
-              </div>
+              {/* Minimal Warm Amber Hero CTA */}
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById('menu-section')
+                  if (el) el.scrollIntoView({ behavior: 'smooth' })
+                }}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-stone-950 font-bold px-6 py-3 rounded-xl text-xs sm:text-sm uppercase tracking-wider cursor-pointer shadow-sm hover:shadow-md transition-all active:scale-95 border border-amber-300/50"
+              >
+                <span>See The 3 Specials</span>
+                <ArrowDown className="w-4 h-4 stroke-[2.5]" />
+              </button>
 
-              {/* Login Quick Action if guest */}
+              {/* Login / Demo Quick Action if guest */}
               {!user && (
                 <button
                   onClick={onNavigateToLogin}
-                  className="inline-flex items-center gap-2 bg-[#201C18]/90 hover:bg-[#2C2722] text-amber-300 font-black px-6 py-3.5 rounded-xl text-sm border border-amber-400/50 shadow-lg backdrop-blur-xs transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 bg-[#171412]/90 hover:bg-[#221D18] text-amber-300 font-bold px-5 py-3 rounded-xl text-xs sm:text-sm border border-stone-800 hover:border-amber-400/40 shadow-sm backdrop-blur-xs transition-all cursor-pointer active:scale-95"
                 >
                   <UserPlus className="w-4 h-4" />
-                  <span>Sign In / Register</span>
+                  <span>Sign In / 1-Click Demo</span>
                 </button>
               )}
 
               {/* Fast Badges */}
-              <div className="hidden sm:flex items-center gap-3 text-xs font-bold text-stone-300 bg-[#161412]/80 px-3.5 py-2.5 rounded-xl border border-white/10 backdrop-blur-xs">
+              <div className="hidden sm:flex items-center gap-3 text-xs font-semibold text-stone-300 bg-[#161412]/80 px-3.5 py-2.5 rounded-xl border border-white/10 backdrop-blur-xs">
                 <span className="flex items-center gap-1 text-amber-400">
                   <MapPin className="w-3.5 h-3.5" /> Helipad, Kalapara
                 </span>
@@ -156,7 +157,7 @@ export function HomePage({ onNavigateToOrders, onNavigateToLogin }) {
       </section>
 
       {/* Main Menu Section (Cohesive Dark Ambient Background Below the Hero) */}
-      <section id="menu-section" className="cart-pattern-bg max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
+      <section id="menu-section" className="cart-pattern-bg max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 scroll-mt-16 sm:scroll-mt-20">
         
         {/* Section Heading */}
         <div className="text-center max-w-xl mx-auto mb-14">
@@ -197,17 +198,70 @@ export function HomePage({ onNavigateToOrders, onNavigateToLogin }) {
           </div>
         )}
 
+        {/* Official Promo Poster Card Section */}
+        <div className="mt-16 bg-gradient-to-r from-[#1C1814] via-[#241E18] to-[#1C1814] border-2 border-amber-500/30 rounded-3xl p-6 sm:p-8 shadow-[0_10px_35px_rgba(0,0,0,0.6)] relative overflow-hidden">
+          <div className="absolute -right-16 -top-16 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-rose-600/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+              <div 
+                onClick={() => setIsPosterModalOpen(true)}
+                className="w-20 h-28 sm:w-24 sm:h-32 rounded-xl overflow-hidden border-2 border-amber-400 shadow-lg shrink-0 cursor-pointer group relative"
+              >
+                <img 
+                  src="/poster.jpg" 
+                  alt="Short Break Poster" 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                  <ImageIcon className="w-5 h-5 text-amber-300" />
+                </div>
+              </div>
+
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 text-[11px] font-bold uppercase tracking-wider mb-2 border border-amber-400/30">
+                  <Sparkles className="w-3 h-3 text-amber-400" /> Official Promo Poster
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-white font-display">
+                  Short Break Food Cart Poster
+                </h3>
+                <p className="text-stone-300 text-xs sm:text-sm mt-1 max-w-xl leading-relaxed">
+                  Featuring 3 floating signature delicacies (Meat Box, Sandwich, Fries) + Steaming Cha & Coffee with direct ordering hotline: <strong className="text-amber-300">01641508100 (Raj)</strong>.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => setIsPosterModalOpen(true)}
+                className="w-full sm:w-auto px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 border border-amber-300/50 shadow-xs transition-all cursor-pointer active:scale-95"
+              >
+                <ImageIcon className="w-4 h-4" />
+                <span>View & Download Poster</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
       </section>
+
+      {/* Poster Modal */}
+      <PosterModal 
+        isOpen={isPosterModalOpen} 
+        onClose={() => setIsPosterModalOpen(false)} 
+      />
 
       {/* Floating Bottom Sticky Bar on Mobile when items in cart and user is logged in */}
       {user && totalCount > 0 && (
         <div className="fixed bottom-4 left-4 right-4 z-40 md:hidden animate-slideUp">
           <button
             onClick={() => setIsCartOpen(true)}
-            className="w-full hero-candle-cta text-stone-950 py-3.5 px-5 rounded-2xl shadow-xl flex items-center justify-between font-black text-sm active:translate-y-1"
+            className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 text-stone-950 py-3 px-4 rounded-2xl shadow-lg border border-amber-300/40 flex items-center justify-between font-bold text-sm active:scale-98"
           >
             <div className="flex items-center gap-2">
-              <span className="bg-stone-950 text-amber-300 w-6 h-6 rounded-full flex items-center justify-center text-xs font-mono">
+              <span className="bg-stone-950 text-amber-300 w-5 h-5 rounded-full flex items-center justify-center text-xs font-mono">
                 {totalCount}
               </span>
               <span>View Cart Order</span>

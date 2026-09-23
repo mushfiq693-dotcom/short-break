@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { AmbientBackground } from '../components/AmbientBackground'
+import { DEMO_ACCOUNTS } from '../lib/storage'
 import { 
   Lock, 
   Mail, 
@@ -8,15 +9,18 @@ import {
   ArrowRight, 
   AlertCircle, 
   Phone,
-  Flame,
   CheckCircle2,
-  PhoneCall
+  Sparkles,
+  ShieldCheck,
+  Zap,
+  KeyRound
 } from 'lucide-react'
 
 export function LoginPage({ onLoginSuccess, onNavigateHome }) {
-  const { signIn, signUp } = useAuth()
+  const { signIn, signUp, loginAsDemo } = useAuth()
   const [isSignUp, setIsSignUp] = useState(false)
   
+  const [loginIdentifier, setLoginIdentifier] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
@@ -25,6 +29,22 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
+
+  // 1-Click Demo Fast Login
+  const handleQuickDemoLogin = (demoAccount) => {
+    setErrorMsg('')
+    setLoading(true)
+    try {
+      loginAsDemo(demoAccount.key)
+      setSuccessMsg(`Logged in as ${demoAccount.name}!`)
+      setTimeout(() => {
+        onLoginSuccess?.()
+      }, 400)
+    } catch (err) {
+      setErrorMsg('Failed to login as demo user.')
+      setLoading(false)
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -35,15 +55,25 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
     try {
       if (isSignUp) {
         if (!name.trim()) throw new Error('Please enter your full name')
-        if (!phone.trim()) throw new Error('Phone number is required for order confirmation')
         
-        await signUp(email, password, { name, phone })
+        const digitsOnly = phone.replace(/\D/g, '')
+        if (!digitsOnly) {
+          throw new Error('Phone number is required for order confirmation')
+        }
+        if (digitsOnly.length !== 11) {
+          throw new Error('Phone number must be exactly 11 digits')
+        }
+        if (!/^01\d{9}$/.test(digitsOnly)) {
+          throw new Error('Please enter a valid 11-digit mobile number starting with 01 (e.g. 01712345678)')
+        }
+        
+        await signUp(email, password, { name: name.trim(), phone: digitsOnly })
         setSuccessMsg('Account created successfully! Welcome to Short Break.')
         setTimeout(() => {
           onLoginSuccess?.()
-        }, 1200)
+        }, 600)
       } else {
-        await signIn(email, password)
+        await signIn(loginIdentifier, password)
         onLoginSuccess?.()
       }
     } catch (err) {
@@ -55,48 +85,86 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
 
   return (
     <AmbientBackground>
-      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center p-4 py-12 select-none">
+      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center p-4 py-10 select-none">
         
-        {/* Main Glassmorphic Card */}
-        <div className="glass-panel-dark relative z-10 w-full max-w-md rounded-3xl p-6 sm:p-8 border border-[rgba(255,235,200,0.18)] shadow-[0_16px_48px_rgba(0,0,0,0.65)]">
+        {/* Main Clean Minimal Glassmorphic Card */}
+        <div className="glass-panel-dark relative z-10 w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-xl">
           
-          {/* Top Header Badge */}
-          <div className="flex items-center justify-center mb-3">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 bg-amber-400/20 text-amber-300 border border-amber-400/40 rounded-full text-xs font-black uppercase tracking-wider">
-              <Flame className="w-3 h-3 text-rose-500" />
-              <span>শর্ট ব্রেক • Food Cart Portal</span>
+          {/* Header */}
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/10 text-amber-300 text-xs font-bold mb-2.5 border border-amber-400/20">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>Client Review & Demo Access</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-amber-50 font-signage">
+              {isSignUp ? 'Create Foodie Account' : 'Sign In to Short Break'}
+            </h2>
+            <p className="text-stone-400 text-xs sm:text-sm mt-1">
+              Select a 1-click demo role below or sign in with your credentials
+            </p>
+          </div>
+
+          {/* 1-Click Instant Demo Login Panel */}
+          <div className="mb-6 p-4 rounded-2xl bg-[#171412] border border-amber-500/20 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                <Zap className="w-3.5 h-3.5 text-amber-400 fill-amber-400" /> 1-Click Demo Logins
+              </span>
+              <span className="text-[10px] text-stone-400 font-medium">No Password Required</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {DEMO_ACCOUNTS.map((demo) => {
+                const isAdmin = demo.role === 'admin'
+                return (
+                  <button
+                    key={demo.id}
+                    type="button"
+                    onClick={() => handleQuickDemoLogin(demo)}
+                    className="group text-left p-2.5 rounded-xl bg-stone-900/90 hover:bg-stone-850 border border-stone-800 hover:border-amber-400/40 transition-all cursor-pointer flex items-center gap-2.5 shadow-xs"
+                  >
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-black text-xs shrink-0 border ${
+                      isAdmin 
+                        ? 'bg-rose-600/20 text-rose-400 border-rose-500/40 group-hover:bg-rose-600 group-hover:text-white transition-colors' 
+                        : 'bg-amber-400/20 text-amber-300 border-amber-400/40 group-hover:bg-amber-400 group-hover:text-stone-950 transition-colors'
+                    }`}>
+                      {isAdmin ? '👑' : '🍔'}
+                    </div>
+                    <div className="overflow-hidden leading-tight flex-1">
+                      <div className="text-xs font-bold text-white group-hover:text-amber-300 truncate transition-colors">
+                        {demo.name.split(' (')[0]}
+                      </div>
+                      <div className="text-[10px] text-stone-400 font-mono truncate">
+                        {isAdmin ? 'Cart Admin' : 'Customer'}
+                      </div>
+                    </div>
+                    <span className="text-[10px] px-2 py-1 rounded-md bg-stone-800 text-stone-300 group-hover:bg-amber-400 group-hover:text-stone-950 font-bold transition-colors shrink-0">
+                      Login →
+                    </span>
+                  </button>
+                )
+              })}
             </div>
           </div>
 
-          <div className="text-center mb-6">
-            <h2 className="text-2xl sm:text-3xl font-black text-amber-50 font-signage">
-              {isSignUp ? 'Create Foodie Account' : 'Welcome to Short Break'}
-            </h2>
-            <p className="text-xs sm:text-sm text-stone-300 mt-1">
-              {isSignUp 
-                ? 'Enter your name, email, phone & password to place orders'
-                : 'Sign in to order and check your food cart receipts'}
-            </p>
-          </div>
-
-          {/* Order Call Confirmation Notice */}
-          <div className="mb-5 p-3 bg-amber-400/10 border border-amber-400/30 rounded-xl text-xs text-amber-200 flex items-start gap-2">
-            <PhoneCall className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-            <p className="leading-tight">
-              <strong>অর্ডার কনফার্মেশন:</strong> অর্ডার করার পর অ্যাডমিন এই নাম্বারে সরাসরি কল দিয়ে অর্ডার কনফার্ম করে গ্রিলে তুলবে!
-            </p>
+          <div className="relative flex py-1 items-center mb-5">
+            <div className="flex-grow border-t border-stone-800" />
+            <span className="shrink-0 mx-3 text-stone-500 text-[11px] uppercase font-bold tracking-widest">
+              Or Manual Sign In
+            </span>
+            <div className="flex-grow border-t border-stone-800" />
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-3.5">
             
-            {isSignUp && (
+            {isSignUp ? (
               <>
                 {/* Full Name */}
                 <div>
                   <label className="block text-xs font-bold text-stone-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5 text-amber-400" />
-                    Full Name (আপনার নাম) *
+                    Full Name *
                   </label>
                   <input
                     type="text"
@@ -104,64 +172,92 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
                     placeholder="e.g. Tanvir Hasan"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-3.5 py-2.5 text-sm bg-[#1A1613] text-white rounded-xl border border-stone-700 focus:border-amber-400 focus:ring-1 focus:ring-amber-400/50 focus:outline-hidden font-medium placeholder:text-stone-500 transition-all"
+                    className="w-full px-3.5 py-2.5 text-sm bg-[#181512] text-white rounded-xl border border-stone-800 focus:border-amber-400 focus:outline-hidden font-medium placeholder:text-stone-600 transition-colors"
                   />
                 </div>
 
-                {/* Phone Number - Mandatory */}
+                {/* Phone Number */}
                 <div>
-                  <label className="block text-xs font-bold text-amber-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                    <Phone className="w-3.5 h-3.5 text-amber-400" />
-                    Phone Number (অর্ডার কনফার্মেশন নাম্বার) *
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-bold text-stone-300 uppercase tracking-wider flex items-center gap-1.5">
+                      <Phone className="w-3.5 h-3.5 text-amber-400" />
+                      Phone Number *
+                    </label>
+                    <span className={`text-[10px] font-mono font-bold ${
+                      phone.length === 11 ? 'text-emerald-400' : 'text-stone-500'
+                    }`}>
+                      {phone.length}/11 digits
+                    </span>
+                  </div>
                   <input
                     type="tel"
                     required
-                    placeholder="e.g. 01712-345678"
+                    maxLength={11}
+                    placeholder="e.g. 01712345678"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full px-3.5 py-2.5 text-sm bg-[#1A1613] text-amber-300 rounded-xl border border-amber-400/50 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 focus:outline-hidden font-mono font-bold placeholder:text-stone-600 transition-all"
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '').slice(0, 11)
+                      setPhone(val)
+                    }}
+                    className="w-full px-3.5 py-2.5 text-sm bg-[#181512] text-white rounded-xl border border-stone-800 focus:border-amber-400 focus:outline-hidden font-mono placeholder:text-stone-600 transition-colors"
                   />
-                  <p className="text-[10px] text-stone-400 mt-1">Admin will call this exact number to confirm your order.</p>
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-xs font-bold text-stone-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <Mail className="w-3.5 h-3.5 text-amber-400" />
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-sm bg-[#181512] text-white rounded-xl border border-stone-800 focus:border-amber-400 focus:outline-hidden font-medium placeholder:text-stone-600 transition-colors"
+                  />
                 </div>
               </>
+            ) : (
+              /* Sign In Identifier: Email or Phone Number */
+              <div>
+                <label className="block text-xs font-bold text-stone-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <User className="w-3.5 h-3.5 text-amber-400" />
+                  Email or Phone Number
+                </label>
+                <input
+                  type="text"
+                  required
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  placeholder="e.g. mahim@shortbreak.com or 01641508111"
+                  value={loginIdentifier}
+                  onChange={(e) => setLoginIdentifier(e.target.value)}
+                  className="w-full px-3.5 py-2.5 text-sm bg-[#181512] text-white rounded-xl border border-stone-800 focus:border-amber-400 focus:outline-hidden font-medium placeholder:text-stone-600 transition-colors"
+                />
+              </div>
             )}
-
-            {/* Email */}
-            <div>
-              <label className="block text-xs font-bold text-stone-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                <Mail className="w-3.5 h-3.5 text-amber-400" />
-                Email Address (ইমেইল) *
-              </label>
-              <input
-                type="email"
-                required
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm bg-[#1A1613] text-white rounded-xl border border-stone-700 focus:border-amber-400 focus:ring-1 focus:ring-amber-400/50 focus:outline-hidden font-medium placeholder:text-stone-500 transition-all"
-              />
-            </div>
 
             {/* Password */}
             <div>
               <label className="block text-xs font-bold text-stone-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
                 <Lock className="w-3.5 h-3.5 text-amber-400" />
-                Password (পাসওয়ার্ড) *
+                Password
               </label>
               <input
                 type="password"
                 required
-                placeholder="••••••••"
+                placeholder="password123 for demo"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm bg-[#1A1613] text-white rounded-xl border border-stone-700 focus:border-amber-400 focus:ring-1 focus:ring-amber-400/50 focus:outline-hidden font-medium placeholder:text-stone-500 transition-all"
+                className="w-full px-3.5 py-2.5 text-sm bg-[#181512] text-white rounded-xl border border-stone-800 focus:border-amber-400 focus:outline-hidden font-medium placeholder:text-stone-600 transition-colors"
               />
             </div>
 
             {/* Error Message */}
             {errorMsg && (
-              <div className="p-3 bg-rose-950/80 border border-rose-800 text-rose-200 text-xs rounded-xl flex items-start gap-2">
+              <div className="p-3 bg-rose-950/70 border border-rose-900/60 text-rose-200 text-xs rounded-xl flex items-start gap-2">
                 <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
                 <span>{errorMsg}</span>
               </div>
@@ -169,23 +265,23 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
 
             {/* Success Message */}
             {successMsg && (
-              <div className="p-3 bg-emerald-950/80 border border-emerald-800 text-emerald-200 text-xs rounded-xl flex items-start gap-2">
+              <div className="p-3 bg-emerald-950/70 border border-emerald-900/60 text-emerald-200 text-xs rounded-xl flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                 <span>{successMsg}</span>
               </div>
             )}
 
-            {/* Submit CTA */}
+            {/* Minimal Clean Primary Submit CTA */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 hero-candle-cta rounded-xl font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-50 transition-all mt-2"
+              className="w-full py-3 px-4 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-stone-950 font-bold rounded-xl text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow-md transition-all active:scale-[0.99] disabled:opacity-50 mt-3"
             >
               {loading ? (
-                <div className="w-5 h-5 border-2 border-stone-900 border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-stone-950 border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                  <span>{isSignUp ? 'Create Account & Start Ordering' : 'Sign In & Order Food'}</span>
+                  <span>{isSignUp ? 'Create Account' : 'Sign In'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -204,9 +300,9 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
                     setIsSignUp(false)
                     setErrorMsg('')
                   }}
-                  className="text-amber-400 hover:text-amber-300 font-bold underline cursor-pointer"
+                  className="text-amber-400 hover:text-amber-300 font-bold transition-colors cursor-pointer"
                 >
-                  Sign In here
+                  Sign In
                 </button>
               </p>
             ) : (
@@ -218,9 +314,9 @@ export function LoginPage({ onLoginSuccess, onNavigateHome }) {
                     setIsSignUp(true)
                     setErrorMsg('')
                   }}
-                  className="text-amber-400 hover:text-amber-300 font-bold underline cursor-pointer"
+                  className="text-amber-400 hover:text-amber-300 font-bold transition-colors cursor-pointer"
                 >
-                  Create an account
+                  Create account
                 </button>
               </p>
             )}

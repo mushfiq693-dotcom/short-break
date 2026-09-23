@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'
 import confetti from 'canvas-confetti'
 
-export function CartDrawer({ onNavigateToOrders, onNavigateToLogin }) {
+export function CartDrawer({ onNavigateToOrders, onNavigateToLogin, onNavigateToMenu }) {
   const { cartItems, updateQuantity, removeFromCart, clearCart, totalAmount, totalCount, isCartOpen, setIsCartOpen } = useCart()
   const { user } = useAuth()
 
@@ -53,9 +53,17 @@ export function CartDrawer({ onNavigateToOrders, onNavigateToLogin }) {
       return
     }
 
-    const contactPhone = (phone || user.phone || '').trim()
+    const contactPhone = (phone || user.phone || '').replace(/\D/g, '')
     if (!contactPhone) {
-      setErrorMsg('Please provide a valid phone number. Admin will call this number to confirm your order!')
+      setErrorMsg('অর্ডার কনফার্মেশনের জন্য ফোন নম্বর দেওয়া বাধ্যতামূলক।')
+      return
+    }
+    if (contactPhone.length !== 11) {
+      setErrorMsg('ফোন নম্বরটি অবশ্যই ঠিক ১১ ডিজিটের হতে হবে (১১ এর কম বা বেশি গ্রহণযোগ্য নয়)।')
+      return
+    }
+    if (!/^01\d{9}$/.test(contactPhone)) {
+      setErrorMsg('সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (01 দিয়ে শুরু হতে হবে, যেমন: 01712345678)।')
       return
     }
 
@@ -65,7 +73,7 @@ export function CartDrawer({ onNavigateToOrders, onNavigateToLogin }) {
         user,
         items: cartItems,
         notes,
-        customerPhone: contactPhone,
+        customer_phone: contactPhone,
         customerName: user.name || user.email?.split('@')[0]
       })
 
@@ -198,7 +206,10 @@ export function CartDrawer({ onNavigateToOrders, onNavigateToLogin }) {
                       Add delicious Meat Boxes, Grilled Sandwiches, or French Fries from our street menu!
                     </p>
                     <button
-                      onClick={handleClose}
+                      onClick={() => {
+                        handleClose()
+                        onNavigateToMenu?.()
+                      }}
                       className="hero-candle-cta px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer"
                     >
                       Browse Food Menu
@@ -263,20 +274,41 @@ export function CartDrawer({ onNavigateToOrders, onNavigateToLogin }) {
                       
                       {/* Phone Number Field */}
                       <div>
-                        <label className="block text-xs font-bold text-amber-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                          <Phone className="w-3.5 h-3.5 text-amber-400" />
-                          Confirmation Phone Number (কল কনফার্মেশন নাম্বার) *
-                        </label>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                            <Phone className="w-3.5 h-3.5 text-amber-400" />
+                            Confirmation Phone Number (কল কনফার্মেশন নাম্বার) *
+                          </label>
+                          <span className={`text-[10px] font-mono font-bold ${
+                            phone.length === 11 
+                              ? 'text-emerald-400' 
+                              : phone.length > 0 
+                                ? 'text-amber-400' 
+                                : 'text-stone-500'
+                          }`}>
+                            {phone.length}/11 digits
+                          </span>
+                        </div>
                         <input
                           type="tel"
                           required
-                          placeholder="e.g. 01712-345678"
+                          maxLength={11}
+                          minLength={11}
+                          pattern="01[0-9]{9}"
+                          placeholder="e.g. 01712345678 (11 digits)"
                           value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          className="w-full px-3 py-2 text-xs bg-[#1C1815] text-amber-300 rounded-lg border border-amber-400/40 focus:outline-hidden focus:ring-1 focus:ring-amber-400 font-mono font-bold"
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, '').slice(0, 11)
+                            setPhone(val)
+                          }}
+                          className={`w-full px-3 py-2 text-xs bg-[#1C1815] rounded-lg border focus:outline-hidden font-mono font-bold transition-all ${
+                            phone.length === 11
+                              ? 'text-emerald-300 border-emerald-500/60 focus:ring-1 focus:ring-emerald-400'
+                              : 'text-amber-300 border-amber-400/40 focus:ring-1 focus:ring-amber-400'
+                          }`}
                         />
                         <span className="text-[10px] text-stone-400 mt-1 block">
-                          📞 Admin will call this number to confirm before cooking.
+                          📞 Admin will call this 11-digit number to confirm before cooking.
                         </span>
                       </div>
 
@@ -330,26 +362,26 @@ export function CartDrawer({ onNavigateToOrders, onNavigateToLogin }) {
                         setIsCartOpen(false)
                         onNavigateToLogin?.()
                       }}
-                      className="w-full py-3 px-4 hero-candle-cta rounded-xl text-center text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md"
+                      className="w-full py-2.5 px-4 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 text-stone-950 font-bold rounded-xl text-center text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-xs border border-amber-300/40 active:scale-98 transition-all"
                     >
-                      <Sparkles className="w-4 h-4" />
-                      <span>Sign In / Register to Place Order (৳{totalAmount})</span>
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Sign In / Demo to Order (৳{totalAmount})</span>
                     </button>
                   ) : (
                     <button
                       onClick={handleCheckout}
                       disabled={submitting}
-                      className="w-full py-3 px-4 hero-candle-cta rounded-xl text-center text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
+                      className="w-full py-2.5 px-4 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 text-stone-950 font-bold rounded-xl text-center text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-xs border border-amber-300/40 active:scale-98 transition-all disabled:opacity-50"
                     >
                       {submitting ? (
                         <>
-                          <div className="w-4 h-4 border-2 border-stone-950 border-t-transparent rounded-full animate-spin" />
-                          <span>Placing Order & Notifying Kitchen...</span>
+                          <div className="w-3.5 h-3.5 border-2 border-stone-950 border-t-transparent rounded-full animate-spin" />
+                          <span>Notifying Kitchen Grill...</span>
                         </>
                       ) : (
                         <>
-                          <PhoneCall className="w-4 h-4 stroke-[2.5]" />
-                          <span>Place Order • ৳{totalAmount} (Call Confirmation)</span>
+                          <PhoneCall className="w-3.5 h-3.5" />
+                          <span>Confirm Order • ৳{totalAmount}</span>
                         </>
                       )}
                     </button>

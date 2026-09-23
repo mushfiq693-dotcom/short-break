@@ -5,6 +5,7 @@ import { Navbar } from './components/Navbar'
 import { Footer } from './components/Footer'
 import { CartDrawer } from './components/CartDrawer'
 import { DeveloperCreditWidget } from './components/DeveloperCreditWidget'
+import { DemoSwitcher } from './components/DemoSwitcher'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { AdminRoute } from './components/AdminRoute'
 
@@ -70,10 +71,24 @@ function AppContent() {
     }
   })
 
+  const scrollToMenuSection = (attempts = 0) => {
+    const el = document.getElementById('menu-section')
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' })
+    } else if (attempts < 15) {
+      setTimeout(() => scrollToMenuSection(attempts + 1), 40)
+    }
+  }
+
   useEffect(() => {
     const handleHashChange = () => {
       try {
         const hash = window.location.hash.replace('#', '')
+        if (hash === 'menu-section') {
+          setActivePage('home')
+          setTimeout(() => scrollToMenuSection(), 60)
+          return
+        }
         if (VALID_PAGES.includes(hash)) {
           setActivePage(hash)
         } else {
@@ -84,14 +99,23 @@ function AppContent() {
       }
     }
     window.addEventListener('hashchange', handleHashChange)
+
+    if (window.location.hash.includes('menu-section')) {
+      setTimeout(() => scrollToMenuSection(), 100)
+    }
+
     return () => window.removeEventListener('hashchange', handleHashChange)
   }, [])
 
-  const handleNavigate = (page) => {
+  const handleNavigate = (page, scrollToMenu = false) => {
     const target = VALID_PAGES.includes(page) ? page : 'home'
     window.location.hash = target === 'home' ? '' : target
     setActivePage(target)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (scrollToMenu) {
+      setTimeout(() => scrollToMenuSection(), 50)
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
   }
 
   return (
@@ -109,7 +133,10 @@ function AppContent() {
           />
         ) : activePage === 'user-dashboard' ? (
           <ProtectedRoute onNavigateToLogin={() => handleNavigate('login')}>
-            <UserDashboard onNavigateHome={() => handleNavigate('home')} />
+            <UserDashboard 
+              onNavigateHome={() => handleNavigate('home')} 
+              onNavigateToMenu={() => handleNavigate('home', true)}
+            />
           </ProtectedRoute>
         ) : activePage === 'admin-orders' ? (
           <AdminRoute 
@@ -138,6 +165,7 @@ function AppContent() {
       <CartDrawer
         onNavigateToOrders={() => handleNavigate('user-dashboard')}
         onNavigateToLogin={() => handleNavigate('login')}
+        onNavigateToMenu={() => handleNavigate('home', true)}
       />
 
       {/* Footer */}
@@ -145,6 +173,9 @@ function AppContent() {
 
       {/* Floating Developer Credit Widget (Bottom-Right Circle Pop-up) */}
       <DeveloperCreditWidget />
+      
+      {/* Floating Demo Role Switcher for 1-Click Client Review (Bottom-Left) */}
+      <DemoSwitcher onSwitchRole={(targetPage) => handleNavigate(targetPage)} />
       
     </div>
   )

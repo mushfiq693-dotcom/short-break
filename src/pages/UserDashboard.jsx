@@ -16,7 +16,7 @@ import {
   Phone
 } from 'lucide-react'
 
-export function UserDashboard({ onNavigateHome }) {
+export function UserDashboard({ onNavigateHome, onNavigateToMenu }) {
   const { user } = useAuth()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
@@ -113,7 +113,7 @@ export function UserDashboard({ onNavigateHome }) {
                 <span className="hidden sm:inline">Refresh</span>
               </button>
               <button
-                onClick={onNavigateHome}
+                onClick={onNavigateToMenu || onNavigateHome}
                 className="hero-candle-cta px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-md"
               >
                 <Utensils className="w-3.5 h-3.5" />
@@ -139,7 +139,7 @@ export function UserDashboard({ onNavigateHome }) {
                 You haven't ordered any snacks yet. Explore our 3 signature specials and pick up fresh off the cart!
               </p>
               <button
-                onClick={onNavigateHome}
+                onClick={onNavigateToMenu || onNavigateHome}
                 className="hero-candle-cta py-3 px-6 rounded-xl font-extrabold text-sm uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer shadow-md"
               >
                 <Utensils className="w-4 h-4" />
